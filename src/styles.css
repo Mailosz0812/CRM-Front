@@ -19,3 +19,12 @@
   --font-sans: 'Montserrat', ui-sans-serif, system-ui, sans-serif;
 }
 
+@layer components {
+  .card {
+    @apply bg-white p-6 rounded-xl shadow-sm border border-gray-100 flex flex-col items-start hover:shadow-md transition-shadow;
+  }
+  .listBut{
+    @apply block text-white/80 hover:bg-primary-dark hover:text-white px-3 py-3 rounded-md text-base font-medium transition-colors;
+  }
+}
+

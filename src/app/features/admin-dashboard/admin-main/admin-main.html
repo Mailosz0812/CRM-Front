@@ -1,0 +1,98 @@
+<div class="space-y-6">
+  <div>
+    <h1 class="text-2xl font-bold text-gray-800 tracking-tight">Cześć, Jan!</h1>
+    <p class="text-gray-500 mt-1">Oto podsumowanie Twojego biznesu na dziś.</p>
+  </div>
+
+  <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+
+    <div class="card md:row-span-2 h-full">
+      <div class="flex items-center justify-between w-full mb-6">
+        <div>
+          <h2 class="text-lg font-semibold text-gray-800">Dzisiejsze zamówienia</h2>
+          <p class="text-xs text-gray-500">Ostatnie aktywne zlecenia</p>
+        </div>
+        <span class="bg-surface-light text-primary text-xs font-bold px-3 py-1 rounded-full">3 nowe</span>
+      </div>
+
+      <div class="w-full flex-1 flex flex-col gap-3 mb-6">
+
+        <div class="flex items-center justify-between p-3 rounded-lg border border-gray-100 hover:bg-gray-50 transition-colors cursor-pointer">
+          <div class="flex items-center gap-3">
+            <div class="w-2 h-2 rounded-full bg-primary"></div> <div>
+            <p class="text-sm font-semibold text-gray-800">#ZAM-1024</p>
+            <p class="text-xs text-gray-500">Jan Kowalski (Firma ABC)</p>
+          </div>
+          </div>
+          <div class="text-right">
+            <p class="text-sm font-bold text-gray-800">1 450 zł</p>
+            <p class="text-xs text-gray-400">10:24</p>
+          </div>
+        </div>
+
+        <div class="flex items-center justify-between p-3 rounded-lg border border-gray-100 hover:bg-gray-50 transition-colors cursor-pointer">
+          <div class="flex items-center gap-3">
+            <div class="w-2 h-2 rounded-full bg-primary"></div>
+            <div>
+              <p class="text-sm font-semibold text-gray-800">#ZAM-1025</p>
+              <p class="text-xs text-gray-500">Anna Nowak</p>
+            </div>
+          </div>
+          <div class="text-right">
+            <p class="text-sm font-bold text-gray-800">320 zł</p>
+            <p class="text-xs text-gray-400">09:15</p>
+          </div>
+        </div>
+
+        <div class="flex items-center justify-between p-3 rounded-lg border border-gray-100 hover:bg-gray-50 transition-colors cursor-pointer">
+          <div class="flex items-center gap-3">
+            <div class="w-2 h-2 rounded-full bg-yellow-400"></div> <div>
+            <p class="text-sm font-semibold text-gray-800">#ZAM-1026</p>
+            <p class="text-xs text-gray-500">Piotr Wiśniewski</p>
+          </div>
+          </div>
+          <div class="text-right">
+            <p class="text-sm font-bold text-gray-800">2 100 zł</p>
+            <p class="text-xs text-yellow-500">Oczekuje</p>
+          </div>
+        </div>
+
+      </div>
+
+      <div class="mt-auto w-full border-t border-gray-100 pt-4">
+        <app-button-small [buttonText]="'Dodaj zamówienie'"></app-button-small>
+      </div>
+    </div>
+
+
+    <div class="card h-full">
+      <div class="flex items-start gap-4 mb-4">
+        <div class="w-10 h-10 rounded-full bg-surface-light flex items-center justify-center text-primary shrink-0">
+          <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z"></path>
+          </svg>
+        </div>
+        <div>
+          <h2 class="text-lg font-semibold text-gray-800">Baza Klientów</h2>
+          <p class="text-sm text-gray-500">Masz 142 aktywnych klientów. 2 nowych w tym tygodniu.</p>
+        </div>
+      </div>
+      <div class="mt-auto">
+        <app-button-small [buttonText]="'Dodaj klienta'"></app-button-small>
+      </div>
+    </div>
+
+
+    <div class="card h-full border-l-4 border-l-primary border-t-gray-100 border-r-gray-100 border-b-gray-100">
+      <div class="flex items-center justify-between w-full mb-4">
+        <h2 class="text-lg font-semibold text-gray-800">Wymaga uwagi</h2>
+        <span class="bg-red-100 text-red-600 text-xs font-bold px-3 py-1 rounded-full">3 pilne</span>
+      </div>
+
+      <div class="bg-red-50 p-3 rounded-lg border border-red-100 w-full mb-6">
+        <p class="text-sm text-red-800 font-medium">Oddzwonić: Firma XYZ</p>
+        <p class="text-xs text-red-600 mt-1">Zalegają z płatnością za fakturę FV/2026/02</p>
+      </div>
+
+      <div class="mt-auto">
+        <app-button-small [buttonText]="'Zobacz wszystkie'"></app-button-small>
