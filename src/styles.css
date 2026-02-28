@@ -16,7 +16,7 @@
   --radius-md: 8px;
   --transition-speed: 0.2s;
 
-  --font-sans: 'Montserrat', ui-sans-serif, system-ui, sans-serif;
+  --font-sans: "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
 }
 
 @layer components {
@@ -27,4 +27,5 @@
     @apply block text-white/80 hover:bg-primary-dark hover:text-white px-3 py-3 rounded-md text-base font-medium transition-colors;
   }
 }
+
 
