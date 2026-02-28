@@ -1,11 +1,14 @@
 import { Component } from '@angular/core';
+import {ButtonSmall} from '../../shared/button-small/button-small';
 
 @Component({
   selector: 'app-clients',
-  imports: [],
+  imports: [
+    ButtonSmall
+  ],
   templateUrl: './clients.html',
-  styleUrl: './clients.css',
 })
 export class Clients {
+  isSidebarOpen = false;
 
 }
