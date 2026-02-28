@@ -6,5 +6,14 @@ import { Component } from '@angular/core';
   templateUrl: './sales.html',
 })
 export class Sales {
+  isOrder1Expanded = false;
+  isOrder1Done = false;
 
+  isOrder2Expanded = false;
+
+  markAsDone(event: Event) {
+    event.stopPropagation();
+    this.isOrder1Done = true;
+    this.isOrder1Expanded = false;
+  }
 }
