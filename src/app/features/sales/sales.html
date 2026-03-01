@@ -1,275 +1,275 @@
-<div class="max-w-5xl h-full mx-auto space-y-6 pt-5">
+<div class="h-full flex flex-col pt-3">
 
-  <div class="flex items-center justify-between mb-8">
-    <div>
-      <h1 class="text-3xl font-bold text-gray-800 tracking-tight">Realizacja zamówień</h1>
-      <p class="text-gray-500 mt-1">Lista wydań magazynowych.</p>
-    </div>
-  </div>
+  <div class="flex-1  w-full flex justify-center">
+    <div class="w-full max-w-6xl flex flex-col ">
 
-  <div class="space-y-4">
+      <div class="flex flex-col items-center justify-between mb-8">
+          <h1 class="text-3xl font-bold text-gray-800 tracking-tight">Realizacja zamówień</h1>
+          <p class="text-gray-500 mt-1">Lista wydań magazynowych.</p>
+      </div>
+      <div class="flex-1 space-y-4 pr-2">
+        <div class="rounded-xl shadow-sm border transition-all duration-500"
+             [class.bg-white]="!isOrder1Done"
+             [class.bg-gray-50]="isOrder1Done"
+             [class.opacity-60]="isOrder1Done"
+             [class.scale-[0.99]]="isOrder1Done"
+             [class.border-primary]="isOrder1Expanded"
+             [class.border-gray-200]="!isOrder1Expanded">
 
-    <div class="rounded-xl shadow-sm border overflow-hidden transition-all duration-500"
-         [class.bg-white]="!isOrder1Done"
-         [class.bg-gray-50]="isOrder1Done"
-         [class.opacity-60]="isOrder1Done"
-         [class.scale-[0.99]]="isOrder1Done"
-         [class.border-primary]="isOrder1Expanded"
-         [class.border-gray-200]="!isOrder1Expanded">
+          <div (click)="isOrder1Expanded = !isOrder1Expanded"
+               class="p-5 flex flex-col sm:flex-row sm:items-center justify-between gap-4 cursor-pointer hover:bg-gray-100 transition-colors">
 
-      <div (click)="isOrder1Expanded = !isOrder1Expanded"
-           class="p-5 flex flex-col sm:flex-row sm:items-center justify-between gap-4 cursor-pointer hover:bg-gray-100 transition-colors">
+            <div class="flex items-center gap-4">
+              <div class="w-12 h-12 rounded-xl flex items-center justify-center shrink-0 transition-colors"
+                   [class.bg-surface-light]="!isOrder1Done"
+                   [class.text-primary]="!isOrder1Done"
+                   [class.bg-gray-200]="isOrder1Done"
+                   [class.text-gray-500]="isOrder1Done">
+                <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20 7l-8-4-8 4m16 0l-8 4m8-4v10l-8 4m0-10L4 7m8 4v10M4 7v10l8 4"></path>
+                </svg>
+              </div>
+              <div>
+                <h2 class="text-xl font-bold transition-all"
+                    [class.text-gray-800]="!isOrder1Done"
+                    [class.text-gray-500]="isOrder1Done"
+                    [class.line-through]="isOrder1Done">
+                  #ZAM-2026-101
+                </h2>
+                <p class="text-sm font-medium text-gray-500">Firma ABC - Jan Kowalski • Dzisiaj, 08:30</p>
+              </div>
+            </div>
 
-        <div class="flex items-center gap-4">
-          <div class="w-12 h-12 rounded-xl flex items-center justify-center shrink-0 transition-colors"
-               [class.bg-surface-light]="!isOrder1Done"
-               [class.text-primary]="!isOrder1Done"
-               [class.bg-gray-200]="isOrder1Done"
-               [class.text-gray-500]="isOrder1Done">
-            <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20 7l-8-4-8 4m16 0l-8 4m8-4v10l-8 4m0-10L4 7m8 4v10M4 7v10l8 4"></path>
-            </svg>
-          </div>
-          <div>
-            <h2 class="text-xl font-bold transition-all"
-                [class.text-gray-800]="!isOrder1Done"
-                [class.text-gray-500]="isOrder1Done"
-                [class.line-through]="isOrder1Done">
-              #ZAM-2026-101
-            </h2>
-            <p class="text-sm font-medium text-gray-500">Firma ABC - Jan Kowalski • Dzisiaj, 08:30</p>
-          </div>
-        </div>
+            <div class="flex items-center justify-between sm:justify-end gap-6 w-full sm:w-auto">
 
-        <div class="flex items-center justify-between sm:justify-end gap-6 w-full sm:w-auto">
-
-          @if (!isOrder1Done) {
-            <span class="px-4 py-1.5 rounded-full text-sm font-bold tracking-wide bg-yellow-100 text-yellow-700 transition-colors">
+              @if (!isOrder1Done) {
+                <span class="px-4 py-1.5 rounded-full text-sm font-bold tracking-wide bg-yellow-100 text-yellow-700 transition-colors">
               Do złożenia
             </span>
-          } @else {
-            <span class="px-4 py-1.5 rounded-full text-sm font-bold tracking-wide bg-green-100 text-green-700 transition-colors">
+              } @else {
+                <span class="px-4 py-1.5 rounded-full text-sm font-bold tracking-wide bg-green-100 text-green-700 transition-colors">
               Gotowe
             </span>
-          }
+              }
 
-          <svg class="w-6 h-6 text-gray-400 transition-transform duration-300"
-               [class.rotate-180]="isOrder1Expanded"
-               fill="none" stroke="currentColor" viewBox="0 0 24 24">
-            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path>
-          </svg>
-        </div>
-      </div>
+              <svg class="w-6 h-6 text-gray-400 transition-transform duration-300"
+                   [class.rotate-180]="isOrder1Expanded"
+                   fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path>
+              </svg>
+            </div>
+          </div>
 
-      @if (isOrder1Expanded) {
-        <div class="flex flex-col p-5 gap-5">
+          @if (isOrder1Expanded) {
+            <div class="flex flex-col p-5 gap-5">
 
 
-          <ul class="space-y-3">
-            <li class="flex items-center justify-between bg-white p-4 rounded-lg border border-gray-200 shadow-sm">
-              <div>
-                <p class="text-lg font-bold text-gray-800">Pepperoni</p>
-                <p class="text-sm text-gray-400 font-mono">SKU: WED-210-001</p>
-              </div>
-              <div class="text-3xl font-black text-primary bg-surface-light px-4 py-1 rounded-lg">
-                x5
-              </div>
-            </li>
-          </ul>
-          <ul class="space-y-3 ">
-            <li class="flex items-center justify-between bg-white p-4 rounded-lg border border-gray-200 shadow-sm">
-              <div>
-                <p class="text-lg font-bold text-gray-800">Kabanosy krakus</p>
-                <p class="text-sm text-gray-400 font-mono">SKU: WED-300-101</p>
-              </div>
-              <div class="text-3xl font-black text-primary bg-surface-light px-4 py-1 rounded-lg">
-                x10
-              </div>
-            </li>
-          </ul>
-          <ul class="space-y-3">
-            <li class="flex items-center justify-between bg-white p-4 rounded-lg border border-gray-200 shadow-sm">
-              <div>
-                <p class="text-lg font-bold text-gray-800">Nuggetsy gazetka</p>
-                <p class="text-sm text-gray-400 font-mono">SKU: GOT-100-012</p>
-              </div>
-              <div class="text-3xl font-black text-primary bg-surface-light px-4 py-1 rounded-lg">
-                x10
-              </div>
-            </li>
-          </ul>
+              <ul class="space-y-3">
+                <li class="flex items-center justify-between bg-white p-4 rounded-lg border border-gray-200 shadow-sm">
+                  <div>
+                    <p class="text-lg font-bold text-gray-800">Pepperoni</p>
+                    <p class="text-sm text-gray-400 font-mono">SKU: WED-210-001</p>
+                  </div>
+                  <div class="text-3xl font-black text-primary bg-surface-light px-4 py-1 rounded-lg">
+                    x5
+                  </div>
+                </li>
+              </ul>
+              <ul class="space-y-3 ">
+                <li class="flex items-center justify-between bg-white p-4 rounded-lg border border-gray-200 shadow-sm">
+                  <div>
+                    <p class="text-lg font-bold text-gray-800">Kabanosy krakus</p>
+                    <p class="text-sm text-gray-400 font-mono">SKU: WED-300-101</p>
+                  </div>
+                  <div class="text-3xl font-black text-primary bg-surface-light px-4 py-1 rounded-lg">
+                    x10
+                  </div>
+                </li>
+              </ul>
+              <ul class="space-y-3">
+                <li class="flex items-center justify-between bg-white p-4 rounded-lg border border-gray-200 shadow-sm">
+                  <div>
+                    <p class="text-lg font-bold text-gray-800">Nuggetsy gazetka</p>
+                    <p class="text-sm text-gray-400 font-mono">SKU: GOT-100-012</p>
+                  </div>
+                  <div class="text-3xl font-black text-primary bg-surface-light px-4 py-1 rounded-lg">
+                    x10
+                  </div>
+                </li>
+              </ul>
 
-          @if (!isOrder1Done) {
-            <div class="flex justify-end pt-4 border-t border-gray-200">
-              <button (click)="markAsDone($event)"
-                      class="w-full sm:w-auto bg-primary hover:bg-primary-dark text-white font-bold py-3.5 px-8 rounded-xl shadow-md transition-all flex items-center justify-center gap-2 text-lg">
-                <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path>
-                </svg>
-                Oznacz jako spakowane
-              </button>
+              @if (!isOrder1Done) {
+                <div class="flex justify-end pt-4 border-t border-gray-200">
+                  <button (click)="markAsDone($event)"
+                          class="w-full sm:w-auto bg-primary hover:bg-primary-dark text-white font-bold py-3.5 px-8 rounded-xl shadow-md transition-all flex items-center justify-center gap-2 text-lg">
+                    <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path>
+                    </svg>
+                    Oznacz jako spakowane
+                  </button>
+                </div>
+              }
             </div>
           }
         </div>
-      }
-    </div>
 
 
-    <div class="bg-white rounded-xl shadow-sm border border-gray-200 overflow-hidden transition-all duration-200"
-         [class.border-primary]="isOrder2Expanded">
+        <div class="bg-white rounded-xl shadow-sm border border-gray-200 transition-all duration-200"
+             [class.border-primary]="isOrder2Expanded">
 
-      <div (click)="isOrder2Expanded = !isOrder2Expanded"
-           class="p-5 flex flex-col sm:flex-row sm:items-center justify-between gap-4 cursor-pointer hover:bg-gray-50 transition-colors">
+          <div (click)="isOrder2Expanded = !isOrder2Expanded"
+               class="p-5 flex flex-col sm:flex-row sm:items-center justify-between gap-4 cursor-pointer hover:bg-gray-50 transition-colors">
 
-        <div class="flex items-center gap-4">
-          <div class="w-12 h-12 rounded-xl bg-gray-100 flex items-center justify-center text-gray-400 shrink-0">
-            <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20 7l-8-4-8 4m16 0l-8 4m8-4v10l-8 4m0-10L4 7m8 4v10M4 7v10l8 4"></path>
-            </svg>
-          </div>
-          <div>
-            <h2 class="text-xl font-bold text-gray-800">#ZAM-2026-099</h2>
-            <p class="text-sm font-medium text-gray-500">Piotr Wiśniewski • Wczoraj, 16:45</p>
-          </div>
-        </div>
+            <div class="flex items-center gap-4">
+              <div class="w-12 h-12 rounded-xl bg-gray-100 flex items-center justify-center text-gray-400 shrink-0">
+                <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20 7l-8-4-8 4m16 0l-8 4m8-4v10l-8 4m0-10L4 7m8 4v10M4 7v10l8 4"></path>
+                </svg>
+              </div>
+              <div>
+                <h2 class="text-xl font-bold text-gray-800">#ZAM-2026-099</h2>
+                <p class="text-sm font-medium text-gray-500">Piotr Wiśniewski • Wczoraj, 16:45</p>
+              </div>
+            </div>
 
-        <div class="flex items-center justify-between sm:justify-end gap-6 w-full sm:w-auto">
+            <div class="flex items-center justify-between sm:justify-end gap-6 w-full sm:w-auto">
           <span class="px-4 py-1.5 rounded-full text-sm font-bold tracking-wide bg-green-100 text-green-700">
             Gotowe
           </span>
-          <svg class="w-6 h-6 text-gray-400 transition-transform duration-300"
-               [class.rotate-180]="isOrder2Expanded"
-               fill="none" stroke="currentColor" viewBox="0 0 24 24">
-            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path>
-          </svg>
-        </div>
-      </div>
-
-      @if (isOrder2Expanded) {
-        <div class="border-t border-gray-100 bg-gray-50/50 p-5 sm:p-6">
-          <h3 class="font-semibold text-gray-700 mb-4">Lista spakowanych produktów:</h3>
-
-          <ul class="space-y-3">
-            <li class="flex items-center justify-between bg-white p-4 rounded-lg border border-gray-200 shadow-sm opacity-70">
-              <div>
-                <p class="text-lg font-bold text-gray-800 text-decoration-line-through">Tatar codzienny</p>
-                <p class="text-sm text-gray-400 font-mono">SKU: KLA-M-011</p>
-              </div>
-              <div class="text-3xl font-black text-gray-400 bg-gray-100 px-4 py-1 rounded-lg">
-                x10
-              </div>
-            </li>
-          </ul>
-          <ul class="space-y-3">
-            <li class="flex items-center justify-between bg-white p-4 rounded-lg border border-gray-200 shadow-sm opacity-70">
-              <div>
-                <p class="text-lg font-bold text-gray-800 text-decoration-line-through">Kiełbasa żywiecka</p>
-                <p class="text-sm text-gray-400 font-mono">SKU: KLA-M-011</p>
-              </div>
-              <div class="text-3xl font-black text-gray-400 bg-gray-100 px-4 py-1 rounded-lg">
-                x10
-              </div>
-            </li>
-          </ul>
-        </div>
-      }
-    </div>
-    <div class="bg-white rounded-xl shadow-sm border border-gray-200 overflow-hidden transition-all duration-200"
-         [class.border-primary]="isOrder2Expanded">
-
-      <div (click)="isOrder2Expanded = !isOrder2Expanded"
-           class="p-5 flex flex-col sm:flex-row sm:items-center justify-between gap-4 cursor-pointer hover:bg-gray-50 transition-colors">
-
-        <div class="flex items-center gap-4">
-          <div class="w-12 h-12 rounded-xl bg-gray-100 flex items-center justify-center text-gray-400 shrink-0">
-            <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20 7l-8-4-8 4m16 0l-8 4m8-4v10l-8 4m0-10L4 7m8 4v10M4 7v10l8 4"></path>
-            </svg>
+              <svg class="w-6 h-6 text-gray-400 transition-transform duration-300"
+                   [class.rotate-180]="isOrder2Expanded"
+                   fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path>
+              </svg>
+            </div>
           </div>
-          <div>
-            <h2 class="text-xl font-bold text-gray-800">#ZAM-2026-099</h2>
-            <p class="text-sm font-medium text-gray-500">Piotr Wiśniewski • Wczoraj, 16:45</p>
-          </div>
-        </div>
 
-        <div class="flex items-center justify-between sm:justify-end gap-6 w-full sm:w-auto">
+          @if (isOrder2Expanded) {
+            <div class="border-t border-gray-100 bg-gray-50/50 p-5 sm:p-6">
+              <h3 class="font-semibold text-gray-700 mb-4">Lista spakowanych produktów:</h3>
+
+              <ul class="space-y-3">
+                <li class="flex items-center justify-between bg-white p-4 rounded-lg border border-gray-200 shadow-sm opacity-70">
+                  <div>
+                    <p class="text-lg font-bold text-gray-800 text-decoration-line-through">Tatar codzienny</p>
+                    <p class="text-sm text-gray-400 font-mono">SKU: KLA-M-011</p>
+                  </div>
+                  <div class="text-3xl font-black text-gray-400 bg-gray-100 px-4 py-1 rounded-lg">
+                    x10
+                  </div>
+                </li>
+              </ul>
+              <ul class="space-y-3">
+                <li class="flex items-center justify-between bg-white p-4 rounded-lg border border-gray-200 shadow-sm opacity-70">
+                  <div>
+                    <p class="text-lg font-bold text-gray-800 text-decoration-line-through">Kiełbasa żywiecka</p>
+                    <p class="text-sm text-gray-400 font-mono">SKU: KLA-M-011</p>
+                  </div>
+                  <div class="text-3xl font-black text-gray-400 bg-gray-100 px-4 py-1 rounded-lg">
+                    x10
+                  </div>
+                </li>
+              </ul>
+            </div>
+          }
+        </div>
+        <div class="bg-white rounded-xl shadow-sm border border-gray-200 transition-all duration-200"
+             [class.border-primary]="isOrder2Expanded">
+
+          <div (click)="isOrder2Expanded = !isOrder2Expanded"
+               class="p-5 flex flex-col sm:flex-row sm:items-center justify-between gap-4 cursor-pointer hover:bg-gray-50 transition-colors">
+
+            <div class="flex items-center gap-4">
+              <div class="w-12 h-12 rounded-xl bg-gray-100 flex items-center justify-center text-gray-400 shrink-0">
+                <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20 7l-8-4-8 4m16 0l-8 4m8-4v10l-8 4m0-10L4 7m8 4v10M4 7v10l8 4"></path>
+                </svg>
+              </div>
+              <div>
+                <h2 class="text-xl font-bold text-gray-800">#ZAM-2026-099</h2>
+                <p class="text-sm font-medium text-gray-500">Piotr Wiśniewski • Wczoraj, 16:45</p>
+              </div>
+            </div>
+
+            <div class="flex items-center justify-between sm:justify-end gap-6 w-full sm:w-auto">
           <span class="px-4 py-1.5 rounded-full text-sm font-bold tracking-wide bg-green-100 text-green-700">
             Gotowe
           </span>
-          <svg class="w-6 h-6 text-gray-400 transition-transform duration-300"
-               [class.rotate-180]="isOrder2Expanded"
-               fill="none" stroke="currentColor" viewBox="0 0 24 24">
-            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path>
-          </svg>
+              <svg class="w-6 h-6 text-gray-400 transition-transform duration-300"
+                   [class.rotate-180]="isOrder2Expanded"
+                   fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path>
+              </svg>
+            </div>
+          </div>
+
+          @if (isOrder2Expanded) {
+            <div class="border-t border-gray-100 bg-gray-50/50 p-5 sm:p-6">
+              <h3 class="font-semibold text-gray-700 mb-4">Lista spakowanych produktów:</h3>
+
+              <ul class="space-y-3">
+                <li class="flex items-center justify-between bg-white p-4 rounded-lg border border-gray-200 shadow-sm opacity-70">
+                  <div>
+                    <p class="text-lg font-bold text-gray-800 text-decoration-line-through">Galareta kurczak</p>
+                    <p class="text-sm text-gray-400 font-mono">SKU: MLE-EKO-011</p>
+                  </div>
+                  <div class="text-3xl font-black text-gray-400 bg-gray-100 px-4 py-1 rounded-lg">
+                    x6
+                  </div>
+                </li>
+              </ul>
+            </div>
+          }
         </div>
-      </div>
+        <div class="bg-white rounded-xl shadow-sm border border-gray-200  transition-all duration-200"
+             [class.border-primary]="isOrder2Expanded">
 
-      @if (isOrder2Expanded) {
-        <div class="border-t border-gray-100 bg-gray-50/50 p-5 sm:p-6">
-          <h3 class="font-semibold text-gray-700 mb-4">Lista spakowanych produktów:</h3>
+          <div (click)="isOrder2Expanded = !isOrder2Expanded"
+               class="p-5 flex flex-col sm:flex-row sm:items-center justify-between gap-4 cursor-pointer hover:bg-gray-50 transition-colors">
 
-          <ul class="space-y-3">
-            <li class="flex items-center justify-between bg-white p-4 rounded-lg border border-gray-200 shadow-sm opacity-70">
+            <div class="flex items-center gap-4">
+              <div class="w-12 h-12 rounded-xl bg-gray-100 flex items-center justify-center text-gray-400 shrink-0">
+                <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20 7l-8-4-8 4m16 0l-8 4m8-4v10l-8 4m0-10L4 7m8 4v10M4 7v10l8 4"></path>
+                </svg>
+              </div>
               <div>
-                <p class="text-lg font-bold text-gray-800 text-decoration-line-through">Galareta kurczak</p>
-                <p class="text-sm text-gray-400 font-mono">SKU: MLE-EKO-011</p>
+                <h2 class="text-xl font-bold text-gray-800">#ZAM-2026-099</h2>
+                <p class="text-sm font-medium text-gray-500">Piotr Wiśniewski • Wczoraj, 16:45</p>
               </div>
-              <div class="text-3xl font-black text-gray-400 bg-gray-100 px-4 py-1 rounded-lg">
-                x6
-              </div>
-            </li>
-          </ul>
-        </div>
-      }
-    </div>
-    <div class="bg-white rounded-xl shadow-sm border border-gray-200 overflow-hidden transition-all duration-200"
-         [class.border-primary]="isOrder2Expanded">
+            </div>
 
-      <div (click)="isOrder2Expanded = !isOrder2Expanded"
-           class="p-5 flex flex-col sm:flex-row sm:items-center justify-between gap-4 cursor-pointer hover:bg-gray-50 transition-colors">
-
-        <div class="flex items-center gap-4">
-          <div class="w-12 h-12 rounded-xl bg-gray-100 flex items-center justify-center text-gray-400 shrink-0">
-            <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20 7l-8-4-8 4m16 0l-8 4m8-4v10l-8 4m0-10L4 7m8 4v10M4 7v10l8 4"></path>
-            </svg>
-          </div>
-          <div>
-            <h2 class="text-xl font-bold text-gray-800">#ZAM-2026-099</h2>
-            <p class="text-sm font-medium text-gray-500">Piotr Wiśniewski • Wczoraj, 16:45</p>
-          </div>
-        </div>
-
-        <div class="flex items-center justify-between sm:justify-end gap-6 w-full sm:w-auto">
+            <div class="flex items-center justify-between sm:justify-end gap-6 w-full sm:w-auto">
           <span class="px-4 py-1.5 rounded-full text-sm font-bold tracking-wide bg-green-100 text-green-700">
             Gotowe
           </span>
-          <svg class="w-6 h-6 text-gray-400 transition-transform duration-300"
-               [class.rotate-180]="isOrder2Expanded"
-               fill="none" stroke="currentColor" viewBox="0 0 24 24">
-            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path>
-          </svg>
+              <svg class="w-6 h-6 text-gray-400 transition-transform duration-300"
+                   [class.rotate-180]="isOrder2Expanded"
+                   fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path>
+              </svg>
+            </div>
+          </div>
+
+          @if (isOrder2Expanded) {
+            <div class="border-t border-gray-100 bg-gray-50/50 p-5 sm:p-6">
+              <h3 class="font-semibold text-gray-700 mb-4">Lista spakowanych produktów:</h3>
+
+              <ul class="space-y-3">
+                <li class="flex items-center justify-between bg-white p-4 rounded-lg border border-gray-200 shadow-sm opacity-70">
+                  <div>
+                    <p class="text-lg font-bold text-gray-800 text-decoration-line-through">Mleko ekologiczne</p>
+                    <p class="text-sm text-gray-400 font-mono">SKU: MLE-EKO-011</p>
+                  </div>
+                  <div class="text-3xl font-black text-gray-400 bg-gray-100 px-4 py-1 rounded-lg">
+                    x6
+                  </div>
+                </li>
+              </ul>
+            </div>
+          }
         </div>
       </div>
-
-      @if (isOrder2Expanded) {
-        <div class="border-t border-gray-100 bg-gray-50/50 p-5 sm:p-6">
-          <h3 class="font-semibold text-gray-700 mb-4">Lista spakowanych produktów:</h3>
-
-          <ul class="space-y-3">
-            <li class="flex items-center justify-between bg-white p-4 rounded-lg border border-gray-200 shadow-sm opacity-70">
-              <div>
-                <p class="text-lg font-bold text-gray-800 text-decoration-line-through">Mleko ekologiczne</p>
-                <p class="text-sm text-gray-400 font-mono">SKU: MLE-EKO-011</p>
-              </div>
-              <div class="text-3xl font-black text-gray-400 bg-gray-100 px-4 py-1 rounded-lg">
-                x6
-              </div>
-            </li>
-          </ul>
-        </div>
-      }
     </div>
-
   </div>
 </div>

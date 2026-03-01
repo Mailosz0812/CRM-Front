@@ -1,8 +1,8 @@
 <div class="flex flex-col h-full">
-  <div class="flex-1 grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 grid-rows-3 gap-3">
+  <div class="flex-1 flex flex-col xl:grid xl:grid-rows-3 xl:grid-cols-3 gap-3 h-full  xl:min-h-0 pb-4 lg:pb-0 pr-1">
 
-    <div class="card row-span-3">
-      <div class="flex items-center justify-between w-full mb-6">
+    <div class="card xl:row-span-3 xl:h-full xl:min-h-0">
+      <div class="flex items-center justify-between w-full mb-6 shrink-0">
         <div>
           <h2 class="text-lg font-semibold text-gray-800">Dzisiejsze zamówienia</h2>
           <p class="text-xs text-gray-500">Ostatnie aktywne zlecenia</p>
@@ -10,14 +10,51 @@
         <span class="bg-surface-light text-primary text-sm font-bold px-3 py-1 rounded-full">3 nowe</span>
       </div>
 
-      <div class="w-full flex-1 flex flex-col gap-3 mb-6">
+      <div class="w-full flex-1 flex flex-col gap-3 mb-6 overflow-y-auto pr-2 min-h-0">
 
-        <div class="flex items-center justify-between p-3 rounded-lg border border-gray-100 hover:bg-gray-50 transition-colors cursor-pointer">
+        <div class="flex items-center justify-between p-3 rounded-lg border border-gray-100 hover:bg-gray-50 transition-colors cursor-pointer shrink-0">
           <div class="flex items-center gap-3">
-            <div class="w-2 h-2 rounded-full bg-primary"></div> <div>
-            <p class=" font-bold text-gray-800">#ZAM-1024</p>
-            <p class="text-sm text-gray-500">Jan Kowalski (Firma ABC)</p>
+            <div class="w-2 h-2 rounded-full bg-primary"></div>
+            <div>
+              <p class="font-bold text-gray-800">#ZAM-1024</p>
+              <p class="text-sm text-gray-500">Jan Kowalski (Firma ABC)</p>
+            </div>
           </div>
+          <div class="text-right">
+            <p class="text-sm font-bold text-gray-800">1 450 zł</p>
+            <p class="text-sm text-gray-400">10:24</p>
+          </div>
+        </div>       <div class="flex items-center justify-between p-3 rounded-lg border border-gray-100 hover:bg-gray-50 transition-colors cursor-pointer shrink-0">
+          <div class="flex items-center gap-3">
+            <div class="w-2 h-2 rounded-full bg-primary"></div>
+            <div>
+              <p class="font-bold text-gray-800">#ZAM-1024</p>
+              <p class="text-sm text-gray-500">Jan Kowalski (Firma ABC)</p>
+            </div>
+          </div>
+          <div class="text-right">
+            <p class="text-sm font-bold text-gray-800">1 450 zł</p>
+            <p class="text-sm text-gray-400">10:24</p>
+          </div>
+        </div>       <div class="flex items-center justify-between p-3 rounded-lg border border-gray-100 hover:bg-gray-50 transition-colors cursor-pointer shrink-0">
+          <div class="flex items-center gap-3">
+            <div class="w-2 h-2 rounded-full bg-primary"></div>
+            <div>
+              <p class="font-bold text-gray-800">#ZAM-1024</p>
+              <p class="text-sm text-gray-500">Jan Kowalski (Firma ABC)</p>
+            </div>
+          </div>
+          <div class="text-right">
+            <p class="text-sm font-bold text-gray-800">1 450 zł</p>
+            <p class="text-sm text-gray-400">10:24</p>
+          </div>
+        </div>        <div class="flex items-center justify-between p-3 rounded-lg border border-gray-100 hover:bg-gray-50 transition-colors cursor-pointer shrink-0">
+          <div class="flex items-center gap-3">
+            <div class="w-2 h-2 rounded-full bg-primary"></div>
+            <div>
+              <p class="font-bold text-gray-800">#ZAM-1024</p>
+              <p class="text-sm text-gray-500">Jan Kowalski (Firma ABC)</p>
+            </div>
           </div>
           <div class="text-right">
             <p class="text-sm font-bold text-gray-800">1 450 zł</p>
@@ -25,12 +62,12 @@
           </div>
         </div>
 
-        <div class="flex items-center justify-between p-3 rounded-lg border border-gray-100 hover:bg-gray-50 transition-colors cursor-pointer">
+        <div class="flex items-center justify-between p-3 rounded-lg border border-gray-100 hover:bg-gray-50 transition-colors cursor-pointer shrink-0">
           <div class="flex items-center gap-3">
             <div class="w-2 h-2 rounded-full bg-primary"></div>
             <div>
-              <p class=" font-bold text-gray-800">#ZAM-1025</p>
-              <p class="text-sm  text-gray-500">Anna Nowak</p>
+              <p class="font-bold text-gray-800">#ZAM-1025</p>
+              <p class="text-sm text-gray-500">Anna Nowak</p>
             </div>
           </div>
           <div class="text-right">
@@ -39,12 +76,13 @@
           </div>
         </div>
 
-        <div class="flex items-center justify-between p-3 rounded-lg border border-gray-100 hover:bg-gray-50 transition-colors cursor-pointer">
+        <div class="flex items-center justify-between p-3 rounded-lg border border-gray-100 hover:bg-gray-50 transition-colors cursor-pointer shrink-0">
           <div class="flex items-center gap-3">
-            <div class="w-2 h-2 rounded-full bg-yellow-400"></div> <div>
-            <p class=" font-bold text-gray-800">#ZAM-1026</p>
-            <p class="text-sm text-gray-500">Piotr Wiśniewski</p>
-          </div>
+            <div class="w-2 h-2 rounded-full bg-yellow-400"></div>
+            <div>
+              <p class="font-bold text-gray-800">#ZAM-1026</p>
+              <p class="text-sm text-gray-500">Piotr Wiśniewski</p>
+            </div>
           </div>
           <div class="text-right">
             <p class="text-sm font-bold text-gray-800">2 100 zł</p>
@@ -54,11 +92,12 @@
 
       </div>
 
-      <div class="mt-auto w-full border-t border-gray-100 pt-4">
+      <div class="mt-auto w-full pt-4 shrink-0">
         <app-button-small [buttonText]="'Dodaj zamówienie'"></app-button-small>
       </div>
     </div>
-    <div class="card md:row-span-3 flex flex-col min-h-0">
+
+    <div class="card h-auto lg:h-full xl:row-span-3">
 
       <div class="flex items-center justify-between w-full mb-3 shrink-0">
         <div>
@@ -67,10 +106,9 @@
         </div>
       </div>
 
-      <div class="flex-1 flex flex-col w-full gap-3 overflow-y-auto pr-1 min-h-0">
+      <div class="flex-1 flex flex-col w-full gap-3  pr-1">
 
-        <div class="bg-gray-50 rounded-xl p-3 border border-gray-100 flex flex-col  gap-2 flex-1 min-h-0">
-
+        <div class="bg-gray-50 rounded-xl p-3 border border-gray-100 flex flex-col gap-2 flex-1 min-h-0">
           <div class="flex justify-between items-start shrink-0">
             <div>
               <span class="text-xs font-medium text-gray-500 uppercase tracking-wider">Dochody (Luty)</span>
@@ -84,35 +122,25 @@
           </div>
 
           <div class="hidden xl:flex flex-1 justify-around items-end h-full pt-2 gap-2 min-h-0">
-
-            <div class="flex-1 flex justify-around items-end h-full pt-2 gap-2 min-h-0">
-
-              <div class="h-full flex flex-col justify-end items-center w-full group cursor-pointer">
-                <span class="text-[10px] font-bold text-gray-400 mb-1 group-hover:text-primary transition-colors">85k</span>
-                <div class="w-full max-w-[40px] bg-primary/30 group-hover:bg-primary/40 rounded-t-md transition-colors" style="height: 60%"></div>
-                <span class="text-[10px] lg:text-xs text-gray-500 mt-1 shrink-0">Gru</span>
-              </div>
-
-              <div class="h-full flex flex-col justify-end items-center w-full group cursor-pointer">
-                <span class="text-[10px] font-bold text-gray-400 mb-1 group-hover:text-primary transition-colors">108k</span>
-                <div class="w-full max-w-[40px] bg-primary/60 group-hover:bg-primary/70 rounded-t-md transition-colors" style="height: 80%"></div>
-                <span class="text-[10px] lg:text-xs text-gray-500 mt-1 shrink-0">Sty</span>
-              </div>
-
-              <div class="h-full flex flex-col justify-end items-center w-full group cursor-pointer">
-                <span class="text-[10px] font-bold text-gray-500 mb-1 group-hover:text-primary transition-colors">124k</span>
-                <div class="w-full max-w-[40px] bg-primary group-hover:bg-primary-dark rounded-t-md transition-colors shadow-sm" style="height: 100%"></div>
-                <span class="text-[10px] lg:text-xs font-semibold text-gray-700 mt-1 shrink-0">Lut</span>
-              </div>
-
+            <div class="h-full flex flex-col justify-end items-center w-full group cursor-pointer">
+              <span class="text-[10px] font-bold text-gray-400 mb-1 group-hover:text-primary transition-colors">85k</span>
+              <div class="w-full max-w-[40px] bg-primary/30 group-hover:bg-primary/40 rounded-t-md transition-colors" style="height: 60%"></div>
+              <span class="text-[10px] lg:text-xs text-gray-500 mt-1 shrink-0">Gru</span>
             </div>
-
+            <div class="h-full flex flex-col justify-end items-center w-full group cursor-pointer">
+              <span class="text-[10px] font-bold text-gray-400 mb-1 group-hover:text-primary transition-colors">108k</span>
+              <div class="w-full max-w-[40px] bg-primary/60 group-hover:bg-primary/70 rounded-t-md transition-colors" style="height: 80%"></div>
+              <span class="text-[10px] lg:text-xs text-gray-500 mt-1 shrink-0">Sty</span>
+            </div>
+            <div class="h-full flex flex-col justify-end items-center w-full group cursor-pointer">
+              <span class="text-[10px] font-bold text-gray-500 mb-1 group-hover:text-primary transition-colors">124k</span>
+              <div class="w-full max-w-[40px] bg-primary group-hover:bg-primary-dark rounded-t-md transition-colors shadow-sm" style="height: 100%"></div>
+              <span class="text-[10px] lg:text-xs font-semibold text-gray-700 mt-1 shrink-0">Lut</span>
+            </div>
           </div>
         </div>
 
-
         <div class="bg-gray-50 rounded-xl p-3 border border-gray-100 flex flex-col gap-2 flex-1 min-h-0">
-
           <div class="flex justify-between items-start shrink-0">
             <div>
               <span class="text-xs font-medium text-gray-500 uppercase tracking-wider">Marża Brutto</span>
@@ -125,38 +153,28 @@
             </span>
           </div>
 
-          <div class="hidden xl:flex flex-1  justify-around items-end h-full pt-2 gap-2 min-h-0">
-
-            <div class="flex-1 flex justify-around items-end h-full pt-2 gap-2 min-h-0">
-
-              <div class="h-full flex flex-col justify-end items-center w-full group cursor-pointer">
-                <span class="text-[10px] font-bold text-gray-400 mb-1 group-hover:text-blue-600 transition-colors">19.9k</span>
-                <div class="w-full max-w-[40px] bg-blue-200 group-hover:bg-blue-300 rounded-t-md transition-colors" style="height: 70%"></div>
-                <span class="text-[10px] lg:text-xs text-gray-500 mt-1 shrink-0">Gru</span>
-              </div>
-
-              <div class="h-full flex flex-col justify-end items-center w-full group cursor-pointer">
-                <span class="text-[10px] font-bold text-gray-400 mb-1 group-hover:text-blue-600 transition-colors">26.4k</span>
-                <div class="w-full max-w-[40px] bg-blue-400 group-hover:bg-blue-500 rounded-t-md transition-colors" style="height: 85%"></div>
-                <span class="text-[10px] lg:text-xs text-gray-500 mt-1 shrink-0">Sty</span>
-              </div>
-
-              <div class="h-full flex flex-col justify-end items-center w-full group cursor-pointer">
-                <span class="text-[10px] font-bold text-gray-500 mb-1 group-hover:text-blue-600 transition-colors">28.5k</span>
-                <div class="w-full max-w-[40px] bg-blue-600 group-hover:bg-blue-700 rounded-t-md transition-colors shadow-sm" style="height: 100%"></div>
-                <span class="text-[10px] lg:text-xs font-semibold text-gray-700 mt-1 shrink-0">Lut</span>
-              </div>
-
+          <div class="hidden xl:flex flex-1 justify-around items-end h-full pt-2 gap-2 min-h-0">
+            <div class="h-full flex flex-col justify-end items-center w-full group cursor-pointer">
+              <span class="text-[10px] font-bold text-gray-400 mb-1 group-hover:text-blue-600 transition-colors">19.9k</span>
+              <div class="w-full max-w-[40px] bg-blue-200 group-hover:bg-blue-300 rounded-t-md transition-colors" style="height: 70%"></div>
+              <span class="text-[10px] lg:text-xs text-gray-500 mt-1 shrink-0">Gru</span>
             </div>
-
+            <div class="h-full flex flex-col justify-end items-center w-full group cursor-pointer">
+              <span class="text-[10px] font-bold text-gray-400 mb-1 group-hover:text-blue-600 transition-colors">26.4k</span>
+              <div class="w-full max-w-[40px] bg-blue-400 group-hover:bg-blue-500 rounded-t-md transition-colors" style="height: 85%"></div>
+              <span class="text-[10px] lg:text-xs text-gray-500 mt-1 shrink-0">Sty</span>
+            </div>
+            <div class="h-full flex flex-col justify-end items-center w-full group cursor-pointer">
+              <span class="text-[10px] font-bold text-gray-500 mb-1 group-hover:text-blue-600 transition-colors">28.5k</span>
+              <div class="w-full max-w-[40px] bg-blue-600 group-hover:bg-blue-700 rounded-t-md transition-colors shadow-sm" style="height: 100%"></div>
+              <span class="text-[10px] lg:text-xs font-semibold text-gray-700 mt-1 shrink-0">Lut</span>
+            </div>
           </div>
         </div>
-
       </div>
     </div>
-
-
-    <div class="card row-span-1">
+    <app-note-section class="flex row-span-2" ></app-note-section>
+    <div class="card h-full">
       <div class="flex items-start gap-4 mb-4">
         <div class="w-10 h-10 rounded-full bg-surface-light flex items-center justify-center text-primary shrink-0">
           <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -172,23 +190,5 @@
         <app-button-small [buttonText]="'Dodaj klienta'"></app-button-small>
       </div>
     </div>
-
-
-    <div class="card border-l-4 border-l-primary border-t-gray-100 border-r-gray-100 border-b-gray-100 row-span-1">
-      <div class="flex items-center justify-between w-full mb-4">
-        <h2 class="text-lg font-semibold text-gray-800">Wymaga uwagi</h2>
-        <span class="bg-red-100 text-red-600 text-xs font-bold px-3 py-1 rounded-full">3 pilne</span>
-      </div>
-
-      <div class="bg-red-50 p-3 rounded-lg border border-red-100 w-full mb-6">
-        <p class="text-sm text-red-800 font-medium">Oddzwonić: Firma XYZ</p>
-        <p class="text-xs text-red-600 mt-1">Zalegają z płatnością za fakturę FV/2026/02</p>
-      </div>
-
-      <div class="mt-auto">
-        <app-button-small [buttonText]="'Zobacz wszystkie'"></app-button-small>
-      </div>
-    </div>
-
   </div>
 </div>

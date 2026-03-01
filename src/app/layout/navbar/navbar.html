@@ -58,12 +58,12 @@
   </div>
 
   @if (isMobileMenuOpen) {
-    <div class="xl:hidden bg-primary px-4 pt-2 pb-4 space-y-1 shadow-inner">
-      <a routerLink="/admin" class="listBut">Dashboard</a>
-      <a routerLink="/admin/clients" class="listBut">Klienci</a>
-      <a routerLink="/admin/sales" class="listBut">Zamówienia</a>
-      <a href="#" class="listBut">Cennik</a>
-      <a href="#" class="listBut">Przypomnienia</a>
+    <div class="absolute top-full left-0 w-full xl:hidden bg-primary px-4 pt-2 pb-4 space-y-1 shadow-lg z-[60]">
+      <a routerLink="/admin" class="listBut block py-2">Dashboard</a>
+      <a routerLink="/admin/clients" class="listBut block py-2">Klienci</a>
+      <a routerLink="/admin/sales" class="listBut block py-2">Zamówienia</a>
+      <a href="#" class="listBut block py-2">Cennik</a>
+      <a href="#" class="listBut block py-2">Przypomnienia</a>
     </div>
   }
 </nav>
