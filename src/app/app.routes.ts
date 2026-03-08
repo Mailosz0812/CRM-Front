@@ -16,7 +16,7 @@ export const routes: Routes = [
     children: [
       { path: '', loadComponent: () => import("./features/admin-dashboard/admin-main/admin-main").then(c => c.AdminMain), pathMatch: 'full'},
       { path: 'clients', loadComponent: () => import("./features/clients/clients").then(c => c.Clients)},
-      { path: 'sales',loadComponent: () => import("./features/sales/sales").then(c => c.Sales)}
+      { path: 'sales',loadComponent: () => import("./features/salesman-sales/salesman-sales").then(c => c.SalesmanSales)}
     ]
   },
   {
@@ -24,7 +24,10 @@ export const routes: Routes = [
     children: [
       { path: '', loadComponent: () => import("./features/salesman-dashboard/salesman-main/salesman-main").then(c => c.SalesmanMain)},
       { path: 'clients', loadComponent: () => import("./features/clients/clients").then(c => c.Clients)},
-      { path: 'sales',loadComponent: () => import("./features/sales/sales").then(c => c.Sales)}
+      { path: 'sales',loadComponent: () => import("./features/salesman-sales/salesman-sales").then(c => c.SalesmanSales)}
     ]
+  },
+  {
+    path: 'magazine', loadComponent: () => import("./features/sales/sales").then(c => c.Sales)
   }
 ];
