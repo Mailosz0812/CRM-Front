@@ -66,4 +66,7 @@
       <a href="#" class="listBut block py-2">Przypomnienia</a>
     </div>
   }
+  @if (isMobileMenuOpen) {
+    <div (click)="isMobileMenuOpen = false" class="fixed inset-0  z-40 xl:hidden"></div>
+  }
 </nav>
