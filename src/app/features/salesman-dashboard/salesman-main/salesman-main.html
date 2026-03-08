@@ -1,0 +1,117 @@
+<div class="flex flex-col h-full">
+  <div class="flex-1 flex flex-col lg:grid lg:grid-cols-2 lg:grid-rows-2 gap-3 lg:h-full lg:min-h-0">
+    <div class="card lg:row-span-2 lg:min-h-0 lg:h-full gap-3">
+      <div class="text-xs font-bold text-gray-500 uppercase tracking-widest mb-1 shrink-0">Oferty</div>
+      <div class="flex gap-3 mb-1">
+        <app-fitler-pill [pillText]="'nowe'"></app-fitler-pill>
+        <app-fitler-pill [pillText]="'wysłane'"></app-fitler-pill>
+        <app-fitler-pill [pillText]="'zatwierdzone'"></app-fitler-pill>
+        <app-fitler-pill [pillText]="'wszystkie'"></app-fitler-pill>
+      </div>
+<!--      trzeba zrobic zawijanie wiersza-->
+      <div class="w-full flex-1 flex flex-col gap-2 lg:overflow-y-auto min-h-0">
+        <div class="p-4 bg-white rounded-xl border border-gray-200 hover:border-gray-300 hover:shadow-sm transition-all cursor-pointer flex flex-col gap-4 shrink-0">
+          <div class="flex justify-between items-start">
+            <div class="flex gap-3">
+                <span class="text-gray-500">#OFE-1024</span>
+              <h3 class="font-semibold text-gray-900">Jan Kowalski (Firma ABC)</h3>
+            </div>
+            <span class="px-2.5 py-0.5 rounded-md text-sm font-medium bg-blue-50 text-blue-700 border border-blue-100">Wysłana</span>
+          </div>
+          <div class="flex items-end pt-2 justify-between border-t border-gray-100">
+            <div>
+              <p class="text-md text-gray-500 mb-0.5">Wartość całkowita</p>
+              <p class="text-xl font-semibold text-gray-800">1 450,00 zł</p>
+            </div>
+            <div class="text-right">
+              <p class="text-md text-gray-500 mb-0.5">Marża <span class="text-gray-400 text-xs ml-1">(20%)</span></p>
+              <p class="text-lg font-medium text-green-600">+ 290,00 zł</p>
+            </div>
+          </div>
+        </div>
+        <div class="p-4 bg-white rounded-xl border border-gray-200 hover:border-gray-300 hover:shadow-sm transition-all cursor-pointer flex flex-col gap-4 shrink-0">
+          <div class="flex justify-between items-start">
+            <div class="flex gap-3">
+                <span class="text-gray-500">#OFE-104</span>
+              <h3 class=" font-semibold text-gray-900">Stasiu</h3>
+            </div>
+            <span class="px-2.5 py-0.5 rounded-md text-sm font-medium bg-blue-50 text-blue-700 border border-blue-100">Zatwierdzona</span>
+          </div>
+          <div class="flex items-end pt-2 justify-between border-t border-gray-100">
+            <div>
+              <p class="text-md text-gray-500 mb-0.5">Wartość całkowita</p>
+              <p class="text-xl font-semibold text-gray-800">1 350,00 zł</p>
+            </div>
+            <div class="text-right">
+              <p class="text-md text-gray-500 mb-0.5">Marża <span class="text-gray-400 text-xs ml-1">(15%)</span></p>
+              <p class="text-lg font-medium text-green-600">+ 190,00 zł</p>
+            </div>
+          </div>
+        </div>
+        <div class="p-4 bg-white rounded-xl border border-gray-200 hover:border-gray-300 hover:shadow-sm transition-all cursor-pointer flex flex-col gap-4 shrink-0">
+          <div class="flex justify-between items-start">
+            <div class="flex gap-3">
+                <span class="text-gray-500">#OFE-024</span>
+              <h3 class=" font-semibold text-gray-900">Archelan</h3>
+            </div>
+            <span class="px-2.5 py-0.5 rounded-md text-sm font-medium bg-blue-50 text-blue-700 border border-blue-100">Wysłana</span>
+          </div>
+          <div class="flex items-end pt-2 justify-between border-t border-gray-100">
+            <div>
+              <p class="text-md text-gray-500 mb-0.5">Wartość całkowita</p>
+              <p class="text-xl font-semibold text-gray-800">3 450,00 zł</p>
+            </div>
+            <div class="text-right">
+              <p class="text-md text-gray-500 mb-0.5">Marża <span class="text-gray-400 text-xs ml-1">(18%)</span></p>
+              <p class="text-lg font-medium text-green-600">+ 590,00 zł</p>
+            </div>
+          </div>
+        </div>
+        <div class="p-4 bg-white rounded-xl border border-gray-200 hover:border-gray-300 hover:shadow-sm transition-all cursor-pointer flex flex-col gap-4 shrink-0">
+          <div class="flex justify-between items-start">
+            <div class="flex gap-3">
+                <span class="text-gray-500">#OFE-994</span>
+              <h3 class=" font-semibold text-gray-900">PSS Społem</h3>
+            </div>
+            <span class="px-2.5 py-0.5 rounded-md text-sm font-medium bg-blue-50 text-blue-700 border border-blue-100">Nowa</span>
+          </div>
+          <div class="flex items-end pt-2 justify-between border-t border-gray-100">
+            <div>
+              <p class="text-md text-gray-500 mb-0.5">Wartość całkowita</p>
+              <p class="text-xl font-semibold text-gray-800">6 150,00 zł</p>
+            </div>
+            <div class="text-right">
+              <p class="text-md text-gray-500 mb-0.5">Marża <span class="text-gray-400 text-xs ml-1">(15%)</span></p>
+              <p class="text-lg font-medium text-green-600">+ 1000,00 zł</p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="card lg:min-h-0 lg:h-full gap-2">
+      <div class="text-xs font-bold text-gray-500 uppercase tracking-widest mb-1 shrink-0">Target</div>
+      <table class="w-full flex-1">
+        <tbody class="divide-y divide-gray-100">
+        <tr class="hover:bg-gray-50 transition-colors">
+          <td class="px-3 py-3 text-gray-500 font-medium">Wygenerowany utarg</td>
+          <td class="px-3 py-3 text-right font-bold text-gray-800">35 000 zł</td>
+        </tr>
+        <tr class="hover:bg-gray-50 transition-colors">
+          <td class="px-3 py-3 text-gray-500 font-medium">Cel do osiągnięcia</td>
+          <td class="px-3 py-3 text-right font-bold text-gray-800">50 000 zł</td>
+        </tr>
+        <tr class="hover:bg-gray-50 transition-colors">
+          <td class="px-3 py-3 text-gray-500 font-medium">Zysk z marży</td>
+          <td class="px-3 py-3 text-right font-bold text-green-600">+ 7 000 zł</td>
+        </tr>
+        <tr class="bg-gray-50/70 hover:bg-gray-50 transition-colors">
+          <td class="px-3 py-3  text-gray-600 font-semibold">Średnia marża</td>
+          <td class="px-3 py-3 text-right font-bold text-gray-800">20.0%</td>
+        </tr>
+        </tbody>
+      </table>
+      <app-button-small [buttonText]="'Raport PDF'"></app-button-small>
+    </div>
+    <app-note-section class="flex"></app-note-section>
+  </div>
+</div>
