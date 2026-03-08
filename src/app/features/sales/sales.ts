@@ -16,4 +16,5 @@ export class Sales {
     this.isOrder1Done = true;
     this.isOrder1Expanded = false;
   }
+
 }
