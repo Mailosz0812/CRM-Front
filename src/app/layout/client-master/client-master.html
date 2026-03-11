@@ -1,0 +1,45 @@
+<div class="xl:hidden shrink-0 mb-4 flex items-center justify-between">
+  <button (click)="isSidebarOpen = true" class="bg-primary text-white px-4 py-2 rounded-lg text-sm font-semibold flex items-center gap-2 shadow hover:bg-primary-dark transition">
+    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"></path></svg>
+    Wybierz klienta
+  </button>
+</div>
+
+@if (isSidebarOpen) {
+  <div (click)="isSidebarOpen = false" class="fixed inset-0 bg-black/50 z-40 xl:hidden"></div>
+}
+
+<div class="card w-[280px] xl:w-3xs gap-2 h-full flex flex-col  fixed xl:relative top-0 left-0 z-50 xl:z-auto transition-transform duration-300 bg-white xl:translate-x-0 shadow-2xl xl:shadow-sm"
+     [class.-translate-x-full]="!isSidebarOpen"
+     [class.translate-x-0]="isSidebarOpen">
+
+  <div class="flex items-center justify-between mb-2 shrink-0">
+    <div class="text-lg font-semibold text-gray-800">
+      Klienci
+    </div>
+    <button (click)="isSidebarOpen = false" class="xl:hidden p-1 text-gray-400 hover:text-gray-800 hover:bg-gray-100 rounded-md">
+      <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path></svg>
+    </button>
+  </div>
+
+  <div class="flex flex-col flex-1 overflow-y-auto w-full pr-1">
+    <div class="px-6 py-4 text-base font-semibold text-gray-900 bg-gray-100 border-l-4 border-l-primary border-t-gray-100 border-r-gray-100 border-b-gray-100 cursor-pointer">
+      Stasiu Sp. z o.o.
+    </div>
+    <div class="px-6 py-4 text-base font-medium text-gray-800 hover:bg-gray-50 cursor-pointer border-l-4 border-transparent hover:border-gray-400 transition">
+      Żabka Mickiewicza
+    </div>
+    <div class="px-6 py-4 text-base font-medium text-gray-800 hover:bg-gray-50 cursor-pointer border-l-4 border-transparent hover:border-gray-400 transition">
+      PSS Społem
+    </div>
+    <div class="px-6 py-4 text-base font-medium text-gray-800 hover:bg-gray-50 cursor-pointer border-l-4 border-transparent hover:border-gray-400 transition">
+      Archelan Kręta
+    </div>
+    <div class="px-6 py-4 text-base font-medium text-gray-800 hover:bg-gray-50 cursor-pointer border-l-4 border-transparent hover:border-gray-400 transition">
+      Makro
+    </div>
+  </div>
+  <div class="flex shrink-0 w-full flex-wrap sm:flex-nowrap">
+    <app-button-small class="w-full sm:w-auto" [isFullWidth] = "true" [buttonText]="'Dodaj klienta'"></app-button-small>
+  </div>
+</div>
