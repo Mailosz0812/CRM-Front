@@ -16,7 +16,18 @@ export const routes: Routes = [
     children: [
       { path: '', loadComponent: () => import("./features/admin-dashboard/admin-main/admin-main").then(c => c.AdminMain), pathMatch: 'full'},
       { path: 'clients', loadComponent: () => import("./features/clients/clients").then(c => c.Clients)},
-      { path: 'sales',loadComponent: () => import("./features/salesman-sales/salesman-sales").then(c => c.SalesmanSales)}
+      {
+        path: 'sales/new',
+        loadComponent: () => import("./features/salesman-sales/sales-creation-form/sales-creation-form").then(c => c.SalesCreationForm)
+      },
+      {
+        path: 'sales',
+        loadComponent: () => import("./features/salesman-sales/salesman-sales").then(c => c.SalesmanSales)
+      },
+      {
+        path: 'prices',
+        loadComponent: () => import("./features/price-list/price-list").then(c => c.PriceList)
+      }
     ]
   },
   {
@@ -24,7 +35,18 @@ export const routes: Routes = [
     children: [
       { path: '', loadComponent: () => import("./features/salesman-dashboard/salesman-main/salesman-main").then(c => c.SalesmanMain)},
       { path: 'clients', loadComponent: () => import("./features/clients/clients").then(c => c.Clients)},
-      { path: 'sales',loadComponent: () => import("./features/salesman-sales/salesman-sales").then(c => c.SalesmanSales)}
+      {
+        path: 'sales/new',
+        loadComponent: () => import("./features/salesman-sales/sales-creation-form/sales-creation-form").then(c => c.SalesCreationForm)
+      },
+      {
+        path: 'sales',
+        loadComponent: () => import("./features/salesman-sales/salesman-sales").then(c => c.SalesmanSales)
+      },
+      {
+        path: 'prices',
+        loadComponent: () => import("./features/price-list/price-list").then(c => c.PriceList)
+      }
     ]
   },
   {
