@@ -16,6 +16,7 @@ export const routes: Routes = [
     children: [
       { path: '', loadComponent: () => import("./features/admin-dashboard/admin-main/admin-main").then(c => c.AdminMain), pathMatch: 'full'},
       { path: 'clients', loadComponent: () => import("./features/clients/clients").then(c => c.Clients)},
+      { path: 'clients/new', loadComponent: () => import("./features/clients/client-creation-form/client-creation-form").then(c => c.ClientCreationForm)},
       {
         path: 'sales/new',
         loadComponent: () => import("./features/salesman-sales/sales-creation-form/sales-creation-form").then(c => c.SalesCreationForm)
@@ -35,6 +36,7 @@ export const routes: Routes = [
     children: [
       { path: '', loadComponent: () => import("./features/salesman-dashboard/salesman-main/salesman-main").then(c => c.SalesmanMain)},
       { path: 'clients', loadComponent: () => import("./features/clients/clients").then(c => c.Clients)},
+      { path: 'clients/new', loadComponent: () => import("./features/clients/client-creation-form/client-creation-form").then(c => c.ClientCreationForm)},
       {
         path: 'sales/new',
         loadComponent: () => import("./features/salesman-sales/sales-creation-form/sales-creation-form").then(c => c.SalesCreationForm)
