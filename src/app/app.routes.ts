@@ -2,6 +2,9 @@ import { Routes } from '@angular/router';
 import {AdminDashboard} from './features/admin-dashboard/admin-dashboard';
 import {GuestGuard} from './core/auth/guest.guard';
 import {AuthGuard} from './core/auth/auth.guard';
+import {ROLE_HOME_PAGES} from './core/auth/role.routes';
+import {UserStateService} from './core/user/user-state.service';
+import {inject} from '@angular/core';
 
 
 const commonRoutes: Routes = [
@@ -24,7 +27,10 @@ const commonRoutes: Routes = [
 export const routes: Routes = [
   {
     path:'',
-    redirectTo: 'login',
+    redirectTo: () => {
+      const user = inject(UserStateService).getUserSnapshot();
+      return user ? ROLE_HOME_PAGES[user.role] : 'login';
+    },
     pathMatch: 'full'
   },
   {

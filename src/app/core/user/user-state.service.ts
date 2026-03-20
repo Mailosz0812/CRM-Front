@@ -19,7 +19,6 @@ export class UserStateService {
       }
     }
   }
-
   setUser(user: User | null) {
     this.stateSubject.next(user);
     if (user) {

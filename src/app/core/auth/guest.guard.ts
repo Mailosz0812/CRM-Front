@@ -9,6 +9,7 @@ import {
 import {AuthService} from './auth.service';
 import {UserStateService} from '../user/user-state.service';
 import {Injectable} from '@angular/core';
+import {ROLE_HOME_PAGES} from './role.routes';
 
 @Injectable({providedIn: 'root'})
 export class GuestGuard implements CanActivate{
@@ -16,10 +17,9 @@ export class GuestGuard implements CanActivate{
   canActivate(route: ActivatedRouteSnapshot, state: RouterStateSnapshot): MaybeAsync<GuardResult> {
     const token = this.authService.getToken();
     const user = this.userState.getUserSnapshot()
-
     if (token && user) {
-      const target = user.role === 'ADMIN' ? '/admin' : '/salesman';
-      return this.router.createUrlTree([target]);
+      const target = ROLE_HOME_PAGES[user.role];
+      return this.router.createUrlTree([target || '/'])
     }
     return true;
   }

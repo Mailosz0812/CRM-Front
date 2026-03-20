@@ -6,6 +6,7 @@ import {LoginRequest} from './models/login.request';
 import {LoginResponse} from './models/login.response';
 import {UserStateService} from '../user/user-state.service';
 import {User} from '../user/user';
+import {ROLE_HOME_PAGES} from './role.routes';
 
 @Injectable({providedIn: "root"})
 export class AuthService{
@@ -57,6 +58,8 @@ export class AuthService{
     const expireDate =  new Date(new Date().getTime() + response.expiresIn)
     this.setToken(response.token);
     this.userState.setUser(response.userInfo);
+    const target = ROLE_HOME_PAGES[response.userInfo.role];
+    this.router.navigate([target]);
   }
 
 }
