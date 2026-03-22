@@ -3,6 +3,7 @@ import {HttpClient, HttpErrorResponse} from '@angular/common/http';
 import {ClientCreation} from './models/client-creation';
 import {catchError, Observable} from 'rxjs';
 import {ClientShortResp} from './models/client-short-resp';
+import {ClientDashboardInfo} from './models/client-dashboard-info';
 
 
 @Injectable({
@@ -19,5 +20,9 @@ export class ClientService{
   getClientsList(): Observable<ClientShortResp[]>{
     const url = this.baseUrl + '/list'
     return this.client.get<ClientShortResp[]>(url);
+  }
+  getClientInfo(id: string): Observable<ClientDashboardInfo> {
+    const url = this.baseUrl + '/view/' + id;
+    return this.client.get<ClientDashboardInfo>(url);
   }
 }
