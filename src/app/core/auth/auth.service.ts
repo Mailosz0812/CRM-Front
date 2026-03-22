@@ -18,9 +18,6 @@ export class AuthService{
   login(mail: string,password: string): Observable<LoginResponse>{
     return this.client.post<LoginResponse>(this.baseUrl,new LoginRequest(mail,password))
       .pipe(
-        catchError(err => {
-          throw(this.handleError(err));
-        }),
         tap(resData => {
           this.handleAuthentication(resData)
         }));
@@ -39,20 +36,6 @@ export class AuthService{
     return localStorage.getItem('token');
   }
 
-  private handleError(error: HttpErrorResponse): Error{
-    let errMess = 'Wystąpił nieznany błąd'
-    if(!error.error){
-      return new Error(errMess);
-    }
-    switch (error.error.errCode) {
-      case 'BAD_CREDENTIALS' :
-        errMess = 'Błedny email lub hasło';
-        break;
-      case 'VALIDATION_ERROR' :
-        errMess = 'Nieprawidłowe dane logowania';
-    }
-    return new Error(errMess);
-  }
 
   private handleAuthentication(response: LoginResponse){
     const expireDate =  new Date(new Date().getTime() + response.expiresIn)

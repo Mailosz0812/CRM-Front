@@ -26,4 +26,11 @@
   .listBut{
     @apply block text-white/80 hover:bg-primary-dark hover:text-white px-3 py-3 rounded-md text-base font-medium transition-colors;
   }
+
+  .selected-client {
+    @apply font-semibold text-gray-900 bg-gray-100 border-l-primary border-t-gray-100 border-r-gray-100 border-b-gray-100;
+  }
+  .normal-client {
+    @apply font-medium text-gray-800 hover:bg-gray-50 cursor-pointer border-l-4 border-transparent hover:border-gray-400 transition;
+  }
 }

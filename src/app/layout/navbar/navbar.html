@@ -9,7 +9,7 @@
       </a>
 
       @if (userState._stateSub | async; as user) {
-        @if (_basePath | async; as basePath){
+        @if (userState._basePath | async; as basePath){
 
           <div class="hidden xl:flex items-center gap-2 text-sm font-medium">
             <a [routerLink]="[basePath]" class="listBut">
@@ -85,7 +85,7 @@
 
   @if (isMobileMenuOpen ) {
     @if (userState._stateSub | async; as user) {
-      @if (_basePath | async; as basePath){
+      @if (userState._basePath | async; as basePath){
         <div class="absolute top-full left-0 w-full xl:hidden bg-primary px-4 pt-2 pb-4 space-y-1 shadow-lg z-[60]">
           <a [routerLink]="[basePath]" class="listBut block py-2">Dashboard</a>
           <a [routerLink]="[basePath,'clients']" class="listBut block py-2">Klienci</a>

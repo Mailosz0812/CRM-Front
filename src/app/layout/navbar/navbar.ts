@@ -19,12 +19,7 @@ import {map, Observable} from 'rxjs';
 export class Navbar{
   isMobileMenuOpen = false;
   isUserMenuOpen = false;
-  _basePath!: Observable<string>;
-  constructor(public userState: UserStateService,public authService: AuthService) {
-    this._basePath = this.userState._stateSub.pipe(
-      map(user => user ? ROLE_HOME_PAGES[user.role] : '/')
-    );
-  }
+  constructor(public userState: UserStateService,public authService: AuthService) {}
 
   onToggleMobileMenu(){
     this.isMobileMenuOpen = !this.isMobileMenuOpen;
