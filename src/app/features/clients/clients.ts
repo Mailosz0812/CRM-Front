@@ -20,14 +20,14 @@ import {AsyncPipe} from '@angular/common';
   templateUrl: './clients.html',
 })
 export class Clients implements OnInit{
-  private selectedId$ = new BehaviorSubject<string | null>(null);
+  selectedId$ = new BehaviorSubject<string | null>(null);
   _clientState!: Observable<ClientDashboardInfo>
   constructor(private clientService: ClientService) {}
 
   ngOnInit(): void {
     this._clientState = this.selectedId$.pipe(
       filter(id => id !== null),
-      switchMap(id => this.clientService.getClientInfo(id))
+      switchMap(id => this.clientService.getDashboardInfo(id))
     );
   }
 
@@ -35,8 +35,4 @@ export class Clients implements OnInit{
   onClientChanged(id: string) {
     this.selectedId$.next(id);
   }
-
-
-
-
 }
