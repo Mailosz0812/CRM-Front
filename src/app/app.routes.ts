@@ -10,7 +10,7 @@ import {inject} from '@angular/core';
 const commonRoutes: Routes = [
   { path: 'clients', loadComponent: () => import("./features/clients/clients").then(c => c.Clients)},
   { path: 'clients/new', loadComponent: () => import("./features/clients/client-creation-form/client-creation-form").then(c => c.ClientCreationForm)},
-  { path: 'clients/details', loadComponent: () => import("./features/clients/client-details/client-details").then(c => c.ClientDetails)},
+  { path: 'clients/details/:id', loadComponent: () => import("./features/clients/client-details/client-details").then(c => c.ClientDetails)},
   {
     path: 'sales/new',
     loadComponent: () => import("./features/salesman-sales/sales-creation-form/sales-creation-form").then(c => c.SalesCreationForm)
