@@ -13,6 +13,6 @@ export interface ClientWidgetInfo{
 export interface ShortSaleResp{
   saleId: string,
   saleData: string,
-  saleStage: string,
+  stage: string,
   sumPrice: string
 }

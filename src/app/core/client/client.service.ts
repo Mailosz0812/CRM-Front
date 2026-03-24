@@ -21,8 +21,12 @@ export class ClientService{
     const url = this.baseUrl + '/list'
     return this.client.get<ClientShortResp[]>(url);
   }
-  getClientInfo(id: string): Observable<ClientDashboardInfo> {
+  getDashboardInfo(id: string): Observable<ClientDashboardInfo> {
     const url = this.baseUrl + '/view/' + id;
     return this.client.get<ClientDashboardInfo>(url);
+  }
+  getClientDetails(id: string): Observable<ClientCreationResp>{
+    const url = this.baseUrl + '/' + id;
+    return this.client.get<ClientCreationResp>(url);
   }
 }
