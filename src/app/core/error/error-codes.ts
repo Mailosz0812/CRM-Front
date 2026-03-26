@@ -9,5 +9,6 @@ export const ERROR_MESSAGES: Record<string,string> ={
   'CLIENT_NOT_FOUND' : 'Klient nie istnieje',
   'USER_NOT_FOUND' : 'Użytkownik nie istnieje',
   'USER_ALREADY_EXISTS' : 'Użytkownik już istnieje (email jest unikalny)',
+  'ARGUMENT_TYPE_MISMATCH': 'Nieprawidłowy argument',
   'GENERIC_ERROR' : 'Wystąpił nieoczekiwany błąd'
 };
