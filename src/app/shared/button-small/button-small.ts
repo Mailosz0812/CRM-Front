@@ -8,6 +8,7 @@ import {Component, EventEmitter, Input, Output} from '@angular/core';
 export class ButtonSmall {
   @Input({required: true}) buttonText!: string;
   @Input() isFullWidth = false;
+  @Input() formId: string = '';
   @Output() clickEvent = new EventEmitter<boolean>
 
   constructor() {}
