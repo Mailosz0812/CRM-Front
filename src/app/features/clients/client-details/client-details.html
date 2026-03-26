@@ -1,0 +1,116 @@
+<div class="h-full w-full flex justify-center items-start">
+  <div class="card gap-4 w-full max-w-4xl p-10 lg:mt-10">
+    <div class="w-full border-b border-gray-200 flex justify-between items-center pb-2">
+    <h2 class="font-bold text-gray-800 text-xl">Dane podstawowe</h2>
+      <app-button-small [buttonText]="'Edytuj klienta'" (clickEvent)="onEditClient()" [hidden]="editClientMode"></app-button-small>
+      <app-button-small [formId]="'clientDetailsForm'" [buttonText]="'Zapisz'" (clickEvent)="onSaveChanges()" [hidden]="!editClientMode"></app-button-small>
+    </div>
+    <div class="flex flex-col gap-5 mb-3 flex-1 pr-2">
+      <form
+        class="grid grid-cols-1 md:grid-cols-2 gap-x-12 gap-y-8"
+        id="clientDetailsForm"
+        [formGroup]="form"
+        (ngSubmit)="onSubmit()"
+      >
+        @if(_clientState | async; as client){
+        <div class="flex flex-col gap-6">
+          <div class="flex flex-col gap-2">
+            <span class="text-sm font-semibold text-gray-400 uppercase tracking-wide">Nazwa Klienta</span>
+            @if(!editClientMode){
+            <span class="text-lg font-medium text-gray-900 leading-tight">{{client.name}}</span>
+            }@else{
+              <input
+                type="text"
+                class="w-full sm:w-96 px-3 py-1  text-lg font-semibold text-gray-800 bg-white border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary/50 focus:border-primary outline-none shadow-sm transition-all"
+                formControlName="name"
+              >
+              @if((!this.form.controls.name || this.isSubmitted) &&
+              this.form.controls.name.invalid){
+                <p>Wprowadź nazwę klienta</p>
+              }
+            }
+          </div>
+
+          <div class="flex flex-col gap-2">
+            <span class="text-sm font-semibold text-gray-400 uppercase tracking-wide">NIP</span>
+            <span class="text-lg font-medium text-gray-900">{{client.nipNumber}}</span>
+          </div>
+
+          <div class="flex flex-col gap-2">
+            <span class="text-sm font-semibold text-gray-400 uppercase tracking-wide">Adres</span>
+            @if(!editClientMode){
+            <span class="text-lg font-medium text-gray-900">{{client.address}}</span>
+            } @else {
+              <input
+                type="text"
+                class="w-full sm:w-96 px-3 py-1  text-lg font-semibold text-gray-800 bg-white border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary/50 focus:border-primary outline-none shadow-sm transition-all"
+                formControlName="address"
+                >
+              @if((!this.form.controls.address || this.isSubmitted) &&
+              this.form.controls.address.invalid){
+                <p>Wprowadź adres klienta</p>
+              }
+            }
+          </div>
+        </div>
+
+        <div class="flex flex-col gap-6">
+          <div class="flex flex-col gap-2">
+            <span class="text-sm font-semibold text-gray-400 uppercase tracking-wide">Telefon</span>
+            @if(!editClientMode){
+            <span class="text-lg font-medium text-gray-900">{{client.phone}}</span>
+            } @else {
+              <input
+                type="text"
+                class="w-full sm:w-96 px-3 py-1  text-lg font-semibold text-gray-800 bg-white border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary/50 focus:border-primary outline-none shadow-sm transition-all"
+                formControlName="phone"
+              >
+              @if((!this.form.controls.phone || this.isSubmitted) &&
+              this.form.controls.phone.invalid){
+                <p>Wprowadź poprawny numer telefonu</p>
+              }
+            }
+          </div>
+
+          <div class="flex flex-col gap-2">
+            <span class="text-sm font-semibold text-gray-400 uppercase tracking-wide">E-mail</span>
+            @if (!editClientMode){
+            <span class="text-lg font-medium text-gray-900 text-emerald-600 underline decoration-emerald-100 underline-offset-4">{{client.mail}}</span>
+            } @else {
+              <input
+                type="text"
+                class="w-full sm:w-96 px-3 py-1  text-lg font-semibold text-gray-800 bg-white border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary/50 focus:border-primary outline-none shadow-sm transition-all"
+                formControlName="mail"
+              >
+              @if((!this.form.controls.mail || this.isSubmitted) &&
+              this.form.controls.mail.invalid){
+                <p>Wprowadź poprawny email</p>
+              }
+            }
+          </div>
+
+          <div class="flex flex-col gap-2">
+            <span class="text-sm font-semibold text-gray-400 uppercase tracking-wide">Osoba decyzyjna</span>
+            @if (!editClientMode){
+            <span class="text-lg font-medium text-gray-900">{{client.decisionPerson}}</span>
+            } @else {
+              <input
+                type="text"
+                class="w-full sm:w-96 px-3 py-1  text-lg font-semibold text-gray-800 bg-white border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary/50 focus:border-primary outline-none shadow-sm transition-all"
+                formControlName="decisionPerson"
+              >
+            }
+          </div>
+          @if(errorMsg()){
+            <div class="md:col-span-2 mt-2">
+              <div class="w-full p-3 text-red-600 bg-red-50 rounded-lg border border-red-100 text-center animate-in fade-in duration-300">
+                <span class="font-bold">Błąd:</span> {{ errorMsg() }}
+              </div>
+            </div>
+          }
+        </div>
+        }
+      </form>
+    </div>
+  </div>
+</div>

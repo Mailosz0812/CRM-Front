@@ -23,23 +23,24 @@
   </div>
 
   <div class="flex flex-col flex-1 overflow-y-auto w-full pr-1">
-    <div class="px-6 py-4 text-base font-semibold text-gray-900 bg-gray-100 border-l-4 border-l-primary border-t-gray-100 border-r-gray-100 border-b-gray-100 cursor-pointer">
-      Stasiu Sp. z o.o.
-    </div>
-    <div class="px-6 py-4 text-base font-medium text-gray-800 hover:bg-gray-50 cursor-pointer border-l-4 border-transparent hover:border-gray-400 transition">
-      Żabka Mickiewicza
-    </div>
-    <div class="px-6 py-4 text-base font-medium text-gray-800 hover:bg-gray-50 cursor-pointer border-l-4 border-transparent hover:border-gray-400 transition">
-      PSS Społem
-    </div>
-    <div class="px-6 py-4 text-base font-medium text-gray-800 hover:bg-gray-50 cursor-pointer border-l-4 border-transparent hover:border-gray-400 transition">
-      Archelan Kręta
-    </div>
-    <div class="px-6 py-4 text-base font-medium text-gray-800 hover:bg-gray-50 cursor-pointer border-l-4 border-transparent hover:border-gray-400 transition">
-      Makro
-    </div>
+    @for (client of (_clients | async); track client.id) {
+      <div
+        (click)="selectClient(client)"
+        class="px-6 py-4 text-base transition cursor-pointer border-l-4"
+        [class.selected-client]="selectedClientId === client.id"
+        [class.normal-client]="selectedClientId !== client.id"
+      >
+        {{ client.name }}
+      </div>
+    } @empty {
+      <div class="p-4 text-center text-gray-500">
+        Brak klientów na liście.
+      </div>
+    }
   </div>
+  @if (userState._basePath | async; as basePath){
   <div class="flex shrink-0 w-full flex-wrap sm:flex-nowrap">
-    <app-button-small routerLink="/admin/clients/new" class="w-full sm:w-auto" [isFullWidth] = "true" [buttonText]="'Dodaj klienta'"></app-button-small>
+    <app-button-small [routerLink]="[basePath,'clients','new']" class="w-full sm:w-auto" [isFullWidth] = "true" [buttonText]="'Dodaj klienta'"></app-button-small>
   </div>
+  }
 </div>

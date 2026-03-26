@@ -183,9 +183,11 @@
           <p class="text-sm text-gray-500">Masz 142 aktywnych klientów. 2 nowych w tym tygodniu.</p>
         </div>
       </div>
+      @if(userState._basePath | async;  as userState){
       <div class="mt-auto">
-        <app-button-small [buttonText]="'Dodaj klienta'"></app-button-small>
+        <app-button-small [buttonText]="'Dodaj klienta'" [routerLink]="[userState, 'clients','new']"></app-button-small>
       </div>
+      }
     </div>
   </div>
 </div>

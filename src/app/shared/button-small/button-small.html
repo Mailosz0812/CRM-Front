@@ -1,5 +1,7 @@
 <button
   [class.w-full]="isFullWidth"
+  type="submit"
+  [attr.form]="formId || null"
   class="text-sm font-medium text-white transition-colors shadow-sm px-4 py-2.5 bg-primary hover:bg-primary-dark rounded-md"
   (click)="onClick()">
 {{buttonText}}

@@ -2,64 +2,82 @@
 
 
   <div class="w-full flex-1 flex flex-col xl:flex-row xl:gap-3 min-h-0">
-    <app-client-master/>
-    <div class="flex-1 flex flex-col lg:grid lg:grid-cols-2 xl:grid-cols-3 lg:grid-rows-2 gap-3 h-full  min-h-0 pb-4 lg:pb-0 pr-1">
+    <app-client-master (clientSelected)="onClientChanged($event)"/>
 
+    <div class="flex-1 flex flex-col lg:grid lg:grid-cols-2 xl:grid-cols-3 lg:grid-rows-2 gap-3 h-full  min-h-0 pb-4 lg:pb-0 pr-1">
+      @if(_clientState | async; as info){
       <div class="card h-auto lg:h-full">
+        @if(info.clientInfo; as client){
         <div class="text-xs font-bold text-gray-500 uppercase tracking-widest mb-1 shrink-0">Dane klienta</div>
         <div class="flex flex-col gap-5 mb-3 flex-1 pr-2">
-          <span class="text-2xl font-bold">Stasiu Sp. z o.o.</span>
+          <span class="text-2xl font-bold">{{client.name}}</span>
           <div class="text-lg space-x-2 text-gray-500">
             <span>NIP:</span>
-            <span>542-000-11-22</span>
+            <span>{{client.nipNumber}}</span>
           </div>
           <div class="text-lg space-x-2 text-gray-500">
             <span>Adres:</span>
-            <span>Białystok, Wierzbowa 5/19</span>
+            <span>{{client.address}}</span>
           </div>
           <div class="text-lg space-x-2 text-gray-500">
             <span>Numer:</span>
-            <span>453 123 123</span>
+            <span>{{client.phone}}</span>
           </div>
         </div>
         <div class="flex shrink-0 w-full flex-wrap sm:flex-nowrap">
-          <app-button-small class="w-full sm:w-auto" [isFullWidth] = "true" [buttonText]="'Profil klienta'"></app-button-small>
+          @if (selectedId$ | async; as id) {
+            <app-button-small
+              [routerLink]="['details', id]"
+              [buttonText]="'Profil klienta'">
+            </app-button-small>
+          }
         </div>
+        }
       </div>
 
       <div class="card lg:row-span-1 xl:row-span-2 lg:h-full lg:min-h-0">
         <div class="text-xs font-bold text-gray-500 uppercase tracking-widest mb-4 shrink-0">
           Zamówienia
         </div>
+        @if(info.recentSales; as sales){
         <div class="w-full flex flex-col gap-4 flex-1 min-h-0 lg:overflow-y-auto pr-2">
-          <div class="cursor-pointer hover:bg-gray-50 p-2 -mx-2">
-            <div class="text-lg font-semibold">Zamówienie nr 12/02/2026</div>
-            <div class="text-gray-500">12.02.2026</div>
-            <div class="text-gray-500">Status: W realizacji</div>
-          </div>
-          <div class="cursor-pointer hover:bg-gray-50 p-2 -mx-2">
-            <div class="text-lg font-semibold">Zamówienie nr 08/02/2026</div>
-            <div class="text-gray-500">08.02.2026</div>
-            <div class="text-gray-500">Status: Zrealizowane</div>
-          </div>
-          <div class="cursor-pointer hover:bg-gray-50 p-2 -mx-2">
-            <div class="text-lg font-semibold">Zamówienie nr 01/02/2026</div>
-            <div class="text-gray-500">01.02.2026</div>
-            <div class="text-gray-500">Status: Anulowane</div>
-          </div>          <div class="cursor-pointer hover:bg-gray-50 p-2 -mx-2">
-            <div class="text-lg font-semibold">Zamówienie nr 01/02/2026</div>
-            <div class="text-gray-500">01.02.2026</div>
-            <div class="text-gray-500">Status: Anulowane</div>
-          </div>          <div class="cursor-pointer hover:bg-gray-50 p-2 -mx-2">
-            <div class="text-lg font-semibold">Zamówienie nr 01/02/2026</div>
-            <div class="text-gray-500">01.02.2026</div>
-            <div class="text-gray-500">Status: Anulowane</div>
-          </div>          <div class="cursor-pointer hover:bg-gray-50 p-2 -mx-2">
-            <div class="text-lg font-semibold">Zamówienie nr 01/02/2026</div>
-            <div class="text-gray-500">01.02.2026</div>
-            <div class="text-gray-500">Status: Anulowane</div>
-          </div>
+          @for(sale of (sales); track sale.saleId){
+            <div class="group cursor-pointer hover:bg-gray-50 p-4 border-b border-gray-100 last:border-0 transition-colors">
+              <div class="flex justify-between items-center">
+                <div class="flex flex-col">
+                  <span class="te leading-tight group-hover:text-green-600 transition-colors">
+                    {{sale.saleData}}
+                  </span>
+                  <span class="text-xs text-gray-400 mt-1 uppercase tracking-wide">
+                    ID: {{sale.saleId.substring(0,8)}}...
+                  </span>
+                </div>
+                <div class="flex items-center gap-6">
+                  <span class="text-xs text-gray-400 uppercase px-2 py-1 border border-gray-100 rounded">
+                    {{sale.stage}}
+                  </span>
+                  <div class="text-base text-[#1e293b] min-w-[100px] text-right">
+                    {{sale.sumPrice}} <span class="text-sm text-gray-400 ml-0.5">zł</span>
+                  </div>
+                </div>
+              </div>
+            </div>
+          } @empty {
+            <div class="flex flex-col items-center justify-center py-12 px-4 text-center">
+              <svg xmlns="http://www.w3.org/2000/svg" class="h-16 w-16 text-gray-200 mb-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M20 7l-8-4-8 4m16 0l-8 4m8-4v10l-8 4m0-10L4 7m8 4v10M4 7v10l8 4" />
+              </svg>
+              <h3 class=" font-bold text-[#1e293b] uppercase tracking-wider">
+                Brak zamówień
+              </h3>
+
+              <p class="mt-2 text-sm text-gray-500  text-center leading-relaxed">
+                Nie znaleziono żadnych zamówień dla tego klienta w systemie
+              </p>
+            </div>
+          }
         </div>
+        }
       </div>
 
       <div class="card lg:row-span-1 xl:row-span-2 lg:h-full lg:min-h-0">
@@ -130,7 +148,7 @@
       </div>
 
       <app-note-section class=" flex"></app-note-section>
-
+      }
     </div>
   </div>
 </div>
