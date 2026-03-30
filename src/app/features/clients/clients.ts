@@ -6,7 +6,7 @@ import {RouterLink} from '@angular/router';
 import {ClientService} from '../../core/client/client.service';
 import {BehaviorSubject, filter, Observable, switchMap} from 'rxjs';
 import {ClientDashboardInfo} from '../../core/client/models/client-dashboard-info';
-import {AsyncPipe} from '@angular/common';
+import {AsyncPipe, CurrencyPipe, LowerCasePipe} from '@angular/common';
 
 @Component({
   selector: 'app-clients',
@@ -15,7 +15,9 @@ import {AsyncPipe} from '@angular/common';
     NoteSection,
     ClientMaster,
     RouterLink,
-    AsyncPipe
+    AsyncPipe,
+    CurrencyPipe,
+    LowerCasePipe
   ],
   templateUrl: './clients.html',
 })
@@ -30,7 +32,6 @@ export class Clients implements OnInit{
       switchMap(id => this.clientService.getDashboardInfo(id))
     );
   }
-
 
   onClientChanged(id: string) {
     this.selectedId$.next(id);

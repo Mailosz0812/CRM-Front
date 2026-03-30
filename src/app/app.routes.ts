@@ -22,6 +22,10 @@ const commonRoutes: Routes = [
   {
     path: 'prices',
     loadComponent: () => import("./features/price-list/price-list").then(c => c.PriceList)
+  },
+  {
+    path: 'prices/new/:id',
+    loadComponent: () => import("./features/price-list/price-list-creation/price-list-creation").then(c => c.PriceListCreation)
   }
 ]
 export const routes: Routes = [

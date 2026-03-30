@@ -9,7 +9,9 @@ export class ButtonSmall {
   @Input({required: true}) buttonText!: string;
   @Input() isFullWidth = false;
   @Input() formId: string = '';
+  @Input() disabled = false;
   @Output() clickEvent = new EventEmitter<boolean>
+
 
   constructor() {}
 

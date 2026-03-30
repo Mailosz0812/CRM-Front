@@ -8,6 +8,7 @@ export class ErrorInterceptor implements HttpInterceptor{
   intercept(req: HttpRequest<any>, next: HttpHandler): Observable<HttpEvent<any>> {
     return next.handle(req).pipe(
       catchError((error: HttpErrorResponse) => {
+        console.log(error);
         let errMsg = ERROR_MESSAGES['GENERIC_ERROR']
 
         if(error.error && error.error.errCode){
