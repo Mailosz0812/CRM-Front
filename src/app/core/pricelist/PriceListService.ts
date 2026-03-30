@@ -3,6 +3,8 @@ import {HttpClient} from '@angular/common/http';
 import {PriceList} from './models/PriceList';
 import {ListItem, PriceListResponse} from './models/price-list-response';
 import {PriceListShort} from './models/price-list-short';
+import {tap} from 'rxjs';
+import {PriceListUpdate} from './models/price-list-update';
 
 @Injectable({
   providedIn: "root"
@@ -24,6 +26,19 @@ export class PriceListService{
 
   getListItemsByListId(listId: string){
     const url = this.baseUrl + '/items/' + listId;
-    return this.client.get<ListItem[]>(url);
+    return this.client.get<ListItem[]>(url).pipe(
+      tap(value => {
+        console.log(value);
+      })
+    );
+  }
+
+  updateListItems(listItems: ListItem[], priceListId: string){
+    const url = this.baseUrl + '/list'
+    const updateReq: PriceListUpdate = {
+      listId: priceListId,
+      products: listItems
+    }
+    return this.client.patch<PriceListResponse>(url,updateReq);
   }
 }

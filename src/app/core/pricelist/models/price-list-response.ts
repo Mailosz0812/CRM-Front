@@ -1,16 +1,17 @@
-import {ListProduct} from './PriceList';
+import {ProductUnit} from './unit.model';
+import {Category} from './category.model';
 
 export interface PriceListResponse{
   id: string,
   listTitle: string,
   createdAt: string,
-  productsList: ListProduct
+  productsList: ListItem[]
 }
 
 export interface ListItem{
-  id: string,
-  cacheId: string,
+  id: string | null,
   name: string,
   unitPrice: string,
-  visibility: boolean
+  category: Category,
+  unit: ProductUnit
 }
