@@ -11,6 +11,7 @@ export interface PriceListResponse{
 export interface ListItem{
   id: string | null,
   name: string,
+  internal: string,
   unitPrice: string,
   category: Category,
   unit: ProductUnit

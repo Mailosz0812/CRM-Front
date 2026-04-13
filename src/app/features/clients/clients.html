@@ -40,11 +40,14 @@
         @if(info.recentSales; as sales){
         <div class="w-full flex flex-col gap-4 flex-1 min-h-0 lg:overflow-y-auto pr-2">
           @for(sale of (sales); track sale.saleId){
-            <div class="group cursor-pointer hover:bg-gray-50 p-4 border-b border-gray-100 last:border-0 transition-colors">
+            <div
+              class="group cursor-pointer hover:bg-gray-50 p-4 border-b border-gray-100 last:border-0 transition-colors"
+              (click)="onSaleDetails(sale.saleId)"
+            >
               <div class="flex justify-between items-center">
                 <div class="flex flex-col">
                   <span class="te leading-tight group-hover:text-green-600 transition-colors">
-                    {{sale.saleData}}
+                    {{sale.saleName}}
                   </span>
                   <span class="text-xs text-gray-400 mt-1 uppercase tracking-wide">
                     ID: {{sale.saleId.substring(0,8)}}...

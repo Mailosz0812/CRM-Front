@@ -3,6 +3,7 @@ import {ButtonSmall} from '../../shared/button-small/button-small';
 import {AuthService} from '../../core/auth/auth.service';
 import {Router} from '@angular/router';
 import {FormControl, FormGroup, ReactiveFormsModule, Validators} from '@angular/forms';
+import {AppError} from '../../core/error/AppError';
 
 @Component({
   selector: 'app-login-form',
@@ -30,7 +31,7 @@ export class LoginForm {
       const enteredEmail = this.form.value.mail!;
       const enteredPassword = this.form.value.password!;
       this.authService.login(enteredEmail,enteredPassword).subscribe({
-        error: (err: Error) => {
+        error: (err: AppError) => {
           this.isSubmitted = false;
           this.errorMsg.set(err.message);
         }

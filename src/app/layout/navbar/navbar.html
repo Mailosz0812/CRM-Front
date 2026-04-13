@@ -12,24 +12,33 @@
         @if (userState._basePath | async; as basePath){
 
           <div class="hidden xl:flex items-center gap-2 text-sm font-medium">
+            @if(user.role === 'ADMIN' || user.role === 'SALESMAN'){
             <a [routerLink]="[basePath]" class="listBut">
               Dashboard
             </a>
+              <a [routerLink]="[basePath,'sales']" class="listBut">
+                Zamówienia
+              </a>
             <a [routerLink]="[basePath,'clients']" class="listBut">
               Klienci
-            </a>
-            <a [routerLink]="[basePath,'sales']" class="listBut">
-              Zamówienia
             </a>
             <a [routerLink]="[basePath,'prices']" class="listBut">
               Cennik
             </a>
+            }
+            @if(user.role === 'MAGAZINE'){
+              <a [routerLink]="[basePath]" class="listBut">
+                Zamówienia
+              </a>
+            }
             <a href="#" class="listBut">
               Przypomnienia
             </a>
+            @if(user.role === 'ADMIN'){
             <a href="#" class="listBut ">
               Użytkownicy
             </a>
+            }
           </div>
         }
       }
@@ -87,11 +96,19 @@
     @if (userState._stateSub | async; as user) {
       @if (userState._basePath | async; as basePath){
         <div class="absolute top-full left-0 w-full xl:hidden bg-primary px-4 pt-2 pb-4 space-y-1 shadow-lg z-[60]">
+          @if(user.role === 'ADMIN' || user.role === 'SALESMAN'){
           <a [routerLink]="[basePath]" class="listBut block py-2">Dashboard</a>
-          <a [routerLink]="[basePath,'clients']" class="listBut block py-2">Klienci</a>
           <a [routerLink]="[basePath,'sales']" class="listBut block py-2">Zamówienia</a>
+          <a [routerLink]="[basePath,'clients']" class="listBut block py-2">Klienci</a>
           <a [routerLink]="[basePath,'prices']" class="listBut block py-2">Cennik</a>
+          }
+          @if(user.role === 'MAGAZINE'){
+          <a [routerLink]="[basePath]" class="listBut block py-2">Zamówienia</a>
+          }
           <a href="#" class="listBut block py-2">Przypomnienia</a>
+          @if(user.role === 'ADMIN'){
+          <a href="#" class="listBut block py-2">Użytkownicy</a>
+          }
         </div>
       }
     }

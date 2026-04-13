@@ -3,94 +3,58 @@
     <div class="card lg:row-span-2 lg:min-h-0 lg:h-full gap-3">
       <div class="text-xs font-bold text-gray-500 uppercase tracking-widest mb-1 shrink-0">Oferty</div>
       <div class="flex  justify-between w-full">
-        <div class="flex gap-3 mb-1">
-          <app-fitler-pill [pillText]="'nowe'"></app-fitler-pill>
-          <app-fitler-pill [pillText]="'wysłane'"></app-fitler-pill>
-          <app-fitler-pill [pillText]="'zatwierdzone'"></app-fitler-pill>
-          <app-fitler-pill [pillText]="'wszystkie'"></app-fitler-pill>
+        <div class="flex gap-3 mb-1 ">
+            <app-fitler-pill [pillText]="'nowa'" (clickEvent)="onAddParam('NOWA')"></app-fitler-pill>
+            <app-fitler-pill [pillText]="'do realizacji'" (clickEvent)="onAddParam('DO_REALIZACJI')"></app-fitler-pill>
+            <app-fitler-pill [pillText]="'zakonczona'" (clickEvent)="onAddParam('ZAKONCZONA')"></app-fitler-pill>
+            <app-fitler-pill [pillText]="'spakowana'" (clickEvent)="onAddParam('SPAKOWANA')"></app-fitler-pill>
+            <app-fitler-pill [pillText]="'odrzucona'" (clickEvent)="onAddParam('ODRZUCONA')"></app-fitler-pill>
         </div>
         <app-button-small [buttonText]="'Nowa oferta'" routerLink="sales/new"></app-button-small>
       </div>
+      @if(salesmanView | async; as view){
       <div class="w-full flex-1 flex flex-col gap-2 lg:overflow-y-auto min-h-0">
-        <div class="p-4 bg-white rounded-xl border border-gray-200 hover:border-gray-300 hover:shadow-sm transition-all cursor-pointer flex flex-col gap-4 shrink-0">
+        @for(sale of view.sales; track sale.saleId){
+        <div
+          class="p-4 bg-white rounded-xl border border-gray-200 hover:border-gray-300 hover:shadow-sm transition-all cursor-pointer flex flex-col gap-4 shrink-0"
+          (click)="onSaleDetails(sale.saleId)"
+        >
           <div class="flex justify-between items-start">
             <div class="flex gap-3">
-                <span class="text-gray-500">#OFE-1024</span>
-              <h3 class="font-semibold text-gray-900">Jan Kowalski (Firma ABC)</h3>
+                <span class="text-gray-500"></span>
+              <h3 class="font-semibold text-gray-900">{{sale.clientName}}</h3>
             </div>
-            <span class="px-2.5 py-0.5 rounded-md text-sm font-medium bg-blue-50 text-blue-700 border border-blue-100">Wysłana</span>
+            <span class="px-2.5 py-0.5 rounded-md text-sm font-medium bg-blue-50 text-blue-700 border border-blue-100">{{sale.stage | formatEnum | uppercase}}</span>
           </div>
           <div class="flex items-end pt-2 justify-between border-t border-gray-100">
             <div>
               <p class="text-md text-gray-500 mb-0.5">Wartość całkowita</p>
-              <p class="text-xl font-semibold text-gray-800">1 450,00 zł</p>
+              <p class="text-xl font-semibold text-gray-800">{{sale.sumPrice | number: '1.2-2'}} zł</p>
             </div>
             <div class="text-right">
-              <p class="text-md text-gray-500 mb-0.5">Marża <span class="text-gray-400 text-xs ml-1">(20%)</span></p>
-              <p class="text-lg font-medium text-green-600">+ 290,00 zł</p>
+              <p class="text-md text-gray-500 mb-0.5">Marża <span class="text-gray-400 text-xs ml-1">--</span></p>
+              <p class="text-lg font-medium text-green-600">--</p>
             </div>
           </div>
         </div>
-        <div class="p-4 bg-white rounded-xl border border-gray-200 hover:border-gray-300 hover:shadow-sm transition-all cursor-pointer flex flex-col gap-4 shrink-0">
-          <div class="flex justify-between items-start">
-            <div class="flex gap-3">
-                <span class="text-gray-500">#OFE-104</span>
-              <h3 class=" font-semibold text-gray-900">Stasiu</h3>
-            </div>
-            <span class="px-2.5 py-0.5 rounded-md text-sm font-medium bg-blue-50 text-blue-700 border border-blue-100">Zatwierdzona</span>
+        } @empty {
+          <div class="flex flex-col items-center justify-center py-12 px-4 text-center border border-gray-200 flex-1 rounded-md">
+            <svg xmlns="http://www.w3.org/2000/svg" class="h-16 w-16 text-gray-200 mb-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M20 7l-8-4-8 4m16 0l-8 4m8-4v10l-8 4m0-10L4 7m8 4v10M4 7v10l8 4" />
+            </svg>
+            <h3 class=" font-bold text-[#1e293b] uppercase tracking-wider">
+              Brak zamówień
+            </h3>
+
+            <p class="mt-2 text-sm text-gray-500  text-center leading-relaxed">
+              Nie dodano jeszcze żadnych zamówień
+            </p>
           </div>
-          <div class="flex items-end pt-2 justify-between border-t border-gray-100">
-            <div>
-              <p class="text-md text-gray-500 mb-0.5">Wartość całkowita</p>
-              <p class="text-xl font-semibold text-gray-800">1 350,00 zł</p>
-            </div>
-            <div class="text-right">
-              <p class="text-md text-gray-500 mb-0.5">Marża <span class="text-gray-400 text-xs ml-1">(15%)</span></p>
-              <p class="text-lg font-medium text-green-600">+ 190,00 zł</p>
-            </div>
-          </div>
-        </div>
-        <div class="p-4 bg-white rounded-xl border border-gray-200 hover:border-gray-300 hover:shadow-sm transition-all cursor-pointer flex flex-col gap-4 shrink-0">
-          <div class="flex justify-between items-start">
-            <div class="flex gap-3">
-                <span class="text-gray-500">#OFE-024</span>
-              <h3 class=" font-semibold text-gray-900">Archelan</h3>
-            </div>
-            <span class="px-2.5 py-0.5 rounded-md text-sm font-medium bg-blue-50 text-blue-700 border border-blue-100">Wysłana</span>
-          </div>
-          <div class="flex items-end pt-2 justify-between border-t border-gray-100">
-            <div>
-              <p class="text-md text-gray-500 mb-0.5">Wartość całkowita</p>
-              <p class="text-xl font-semibold text-gray-800">3 450,00 zł</p>
-            </div>
-            <div class="text-right">
-              <p class="text-md text-gray-500 mb-0.5">Marża <span class="text-gray-400 text-xs ml-1">(18%)</span></p>
-              <p class="text-lg font-medium text-green-600">+ 590,00 zł</p>
-            </div>
-          </div>
-        </div>
-        <div class="p-4 bg-white rounded-xl border border-gray-200 hover:border-gray-300 hover:shadow-sm transition-all cursor-pointer flex flex-col gap-4 shrink-0">
-          <div class="flex justify-between items-start">
-            <div class="flex gap-3">
-                <span class="text-gray-500">#OFE-994</span>
-              <h3 class=" font-semibold text-gray-900">PSS Społem</h3>
-            </div>
-            <span class="px-2.5 py-0.5 rounded-md text-sm font-medium bg-blue-50 text-blue-700 border border-blue-100">Nowa</span>
-          </div>
-          <div class="flex items-end pt-2 justify-between border-t border-gray-100">
-            <div>
-              <p class="text-md text-gray-500 mb-0.5">Wartość całkowita</p>
-              <p class="text-xl font-semibold text-gray-800">6 150,00 zł</p>
-            </div>
-            <div class="text-right">
-              <p class="text-md text-gray-500 mb-0.5">Marża <span class="text-gray-400 text-xs ml-1">(15%)</span></p>
-              <p class="text-lg font-medium text-green-600">+ 1000,00 zł</p>
-            </div>
-          </div>
-        </div>
+        }
       </div>
+      }
     </div>
-    <div class="card lg:min-h-0 lg:h-full gap-2">
+    <div class="card lg:min-h-0 lg:h-full gap-2 overflow-hidden relative">
       <div class="text-xs font-bold text-gray-500 uppercase tracking-widest mb-1 shrink-0">Target</div>
       <table class="w-full flex-1">
         <tbody class="divide-y divide-gray-100">
@@ -113,6 +77,17 @@
         </tbody>
       </table>
       <app-button-small [buttonText]="'Raport PDF'"></app-button-small>
+      <div class="absolute inset-0 z-10 flex flex-col items-center justify-center bg-white/70 backdrop-blur-xs rounded-xl">
+
+        <div class="w-12 h-12 rounded-full bg-primary/10 flex items-center justify-center mb-3">
+          <svg class="w-6 h-6 text-primary" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+          </svg>
+        </div>
+
+        <h3 class="text-lg font-bold text-gray-900 mb-1">Nadchodząca funkcja</h3>
+
+      </div>
     </div>
     <app-note-section class="flex"></app-note-section>
   </div>

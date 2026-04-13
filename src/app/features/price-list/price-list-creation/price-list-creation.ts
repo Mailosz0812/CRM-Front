@@ -6,7 +6,6 @@ import {ButtonSmall} from '../../../shared/button-small/button-small';
 import {FormArray, FormBuilder, FormGroup, FormsModule, ReactiveFormsModule, Validators} from '@angular/forms';
 import {PRODUCT_UNITS} from '../../../core/pricelist/models/unit.model';
 import {PriceList} from '../../../core/pricelist/models/PriceList';
-import {HttpErrorResponse} from '@angular/common/http';
 import {CATEGORIES} from '../../../core/pricelist/models/category.model';
 import {UserStateService} from '../../../core/user/user-state.service';
 
@@ -25,8 +24,6 @@ import {UserStateService} from '../../../core/user/user-state.service';
 export class PriceListCreation{
   private clientId!: string | null;
   private basePath!: string | null;
-  errorMsg = signal<string | null>(null);
-  happyMsg = signal<string | null>(null);
   availableUnits = PRODUCT_UNITS;
   availableCategories = CATEGORIES;
   form: FormGroup;
@@ -52,6 +49,7 @@ export class PriceListCreation{
 
     this.newItemForm = this.fb.group({
       name: ['', Validators.required],
+      internal: ['',Validators.required],
       unitPrice: [null, [Validators.required, Validators.min(0)]],
       unit: [null, [Validators.required]],
       prodCategory: [null,[Validators.required]]
@@ -64,11 +62,11 @@ export class PriceListCreation{
 
   addItem() {
     if (this.newItemForm.valid) {
-      const { name, unitPrice, unit,prodCategory } = this.newItemForm.value;
-      console.log(unitPrice)
+      const { name, unitPrice, unit,prodCategory ,internal} = this.newItemForm.value;
 
       const itemGroup = this.fb.group({
         name: [name, Validators.required],
+        internalName: [internal, Validators.required],
         unitPrice: [unitPrice, Validators.required],
         unit: [unit,Validators.required],
         prodCategory: [prodCategory,Validators.required]
@@ -100,7 +98,6 @@ export class PriceListCreation{
         this.router.navigate([this.basePath,'prices'])
       },
       error: (err: Error) => {
-        this.errorMsg.set(err.message)
         console.log(err);
       }
     });

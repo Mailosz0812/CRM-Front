@@ -7,7 +7,7 @@
 
         <div class="p-4 border-b border-gray-100 flex flex-col gap-2 sm:flex-row sm:items-center sm:justify-between shrink-0">
           <h2 class="text-base font-bold text-gray-800">Cennik Marzec</h2>
-          <div class="flex-col sm:flex-row flex gap-2">
+          <div class="flex-col sm:flex-row flex gap-2" [hidden]="!selectedListId">
             <app-button-small class="w-full sm:w-auto" [isFullWidth] = "true" [buttonText]="'Edytuj cennik'" [hidden]="editPriceListMode" (clickEvent) = "onEditList()"></app-button-small>
             <app-button-small class="w-full sm:w-auto" [isFullWidth] = "true" [buttonText]="'Zapisz'" [hidden]="!editPriceListMode" (clickEvent) = "onSaveList()"></app-button-small>
             <app-button-small class="w-full sm:w-auto" [isFullWidth] = "true" [buttonText]="'Powrót'" [hidden]="!editPriceListMode" (clickEvent) = "onCancelList()"></app-button-small>
@@ -40,11 +40,17 @@
               @if (editPriceListMode) {
                 <tr class="bg-green-50/40 border-l-4 border-l-green-500 shadow-sm transition-all" [formGroup]="newItemForm">
 
-                  <td class="py-2 px-4">
+                  <td class="py-2 px-4 flex flex-col gap-2">
                     <input
                       type="text"
                       placeholder="Nazwa produktu..."
                       formControlName="name"
+                      class="w-full text-sm px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-green-500 focus:border-green-500 bg-white placeholder-gray-400 transition-shadow"
+                    />
+                    <input
+                      type="text"
+                      placeholder="SKU-@123"
+                      formControlName="internalName"
                       class="w-full text-sm px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-green-500 focus:border-green-500 bg-white placeholder-gray-400 transition-shadow"
                     />
                   </td>
@@ -101,6 +107,7 @@
                       </button>
                       <div [class.px-4]="!editPriceListMode">
                         <p class="font-semibold text-gray-900">{{ item.name }}</p>
+                        <p class="text-sm text-gray-400">{{item.internal}}</p>
                       </div>
                     </div>
                   </td>

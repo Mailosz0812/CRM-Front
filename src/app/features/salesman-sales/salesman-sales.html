@@ -26,291 +26,306 @@
           <svg class="w-4 h-4 text-gray-400 absolute left-2.5 top-2" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path></svg>
         </div>
         <div class="hidden xl:flex flex-wrap gap-2">
-          <app-fitler-pill [pillText]="'nowe'"></app-fitler-pill>
-          <app-fitler-pill [pillText]="'wysłane'"></app-fitler-pill>
-          <app-fitler-pill [pillText]="'zatwierdzone'"></app-fitler-pill>
+          <app-fitler-pill [pillText]="'utworzone'"></app-fitler-pill>
+          <app-fitler-pill [pillText]="'wysłana'"></app-fitler-pill>
+          <app-fitler-pill [pillText]="'zatwierdzona'"></app-fitler-pill>
           <app-fitler-pill [pillText]="'wszystkie'"></app-fitler-pill>
         </div>
       </div>
+
       <div class="flex flex-col flex-1 overflow-y-auto w-full mb-2">
-        <div class="p-4 bg-white border border-gray-200 cursor-pointer shadow-sm z-10 flex items-center justify-between w-full">
-          <div>
-            <span class="font-bold text-gray-900">#ZAM-1101</span>
-            <p class="text-sm text-gray-600">Makro</p>
+        @for(sale of (sales | async); track sale.saleId){
+          <div class="p-4 bg-white border-b border-gray-200 cursor-pointer hover:bg-gray-50 transition-colors z-10 flex items-center justify-between w-full" (click)="onSelectSale(sale.saleId)">
+            <div class="flex flex-col gap-0.5">
+              <span class="font-bold text-gray-900">{{ sale.saleName }}</span>
+              <span class="text-sm text-gray-500">{{ sale.clientName }}</span>
+            </div>
+            <div class="flex flex-col items-end gap-1.5">
+              <span class="font-bold text-gray-900">{{ sale.sumPrice | number:'1.2-2' }} zł</span>
+              <span class="px-2.5 py-0.5 text-xs font-semibold tracking-wide text-primary bg-white border border-primary rounded-full">
+                {{ sale.stage | formatEnum | lowercase }}
+              </span>
+            </div>
           </div>
-          <span class="font-semibold text-gray-900">14 320 zł</span>
-        </div>
-        <div class="p-4 bg-white border border-gray-200 cursor-pointer shadow-sm z-10 flex items-center justify-between w-full">
-          <div>
-            <span class="font-bold text-gray-900">#ZAM-1042</span>
-            <p class="text-sm text-gray-600">Stasiu Sp zoo</p>
+        } @empty {
+          <div class="flex flex-col items-center justify-center h-full min-h-[250px] p-8 text-center bg-gray-50/50 rounded-xl border-2 border-dashed border-gray-200 m-2">
+            <h3 class="text-sm font-bold text-gray-900 mb-1">Brak zamówień</h3>
+            <p class="text-sm text-gray-500 max-w-[250px]">Nie ma jeszcze żadnych zamówień do wyświetlenia w tym widoku.</p>
           </div>
-          <span class="font-semibold text-gray-900">4 500 zł</span>
-        </div>
+        }
       </div>
+      <app-button-small class="m-3" [buttonText]="'Dodaj zamówienie'" [routerLink]="['new']"></app-button-small>
     </div>
+
     <div class="w-full flex-1 flex flex-col bg-white min-h-0 h-full lg:px-3">
-      <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4 p-6 border-b border-gray-100  bg-white z-10">
-        <div class="flex flex-col gap-2">
-          @if (!editSaleMode) {
-            <h1 class="text-3xl font-semibold text-gray-900">#ZAM-1042</h1>
-          } @else {
-            <input
-              type="text"
-              value="#ZAM-1042"
-              placeholder="Wpisz nazwę własną lub nr referencyjny..."
-              class="w-full sm:w-96 px-3 py-1.5  text-lg font-semibold text-gray-800 bg-white border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary/50 focus:border-primary outline-none shadow-sm transition-all"
-            >
-          }
+      @if(selectedSale | async; as sale){
+        <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4 p-6 border-b border-gray-100  bg-white z-10">
 
-          <div class="flex gap-2 items-center">
-            <p class=" text-gray-500">
-              Klient: <span class="font-semibold text-gray-800">Jan Kowalski (Firma ABC)</span>
-            </p>
-            <p>
-              Utworzono: <span class="font-semibold text-gray-800">Dzisiaj, 10:24</span>
-            </p>
-            <p>
-              Status: <span class="font-semibold text-gray-800">Nowe</span>
-            </p>
-          </div>
-        </div>
-
-        <div class="flex-col lg:flex-row flex gap-2">
-          <button class="px-4 py-2 text-sm font-medium text-gray-700 bg-white border border-gray-200 rounded-lg hover:bg-gray-50 transition-colors flex items-center justify-center gap-2 shadow-sm">
-            <svg class="w-4 h-4 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 17h2a2 2 0 002-2v-4a2 2 0 00-2-2H5a2 2 0 00-2 2v4a2 2 0 002 2h2m2 4h6a2 2 0 002-2v-4a2 2 0 00-2-2H9a2 2 0 00-2 2v4a2 2 0 002 2zm8-12V5a2 2 0 00-2-2H9a2 2 0 00-2 2v4h10z"></path></svg>
-            Wydruk
-          </button>
-          <app-button-small class="w-full sm:w-auto" [isFullWidth] = "true" [buttonText]="'Edytuj zamówienie'" [hidden]="editSaleMode" (clickEvent) = "onEditSale()"></app-button-small>
-          <app-button-small class="w-full sm:w-auto" [isFullWidth] = "true" [buttonText]="'Zapisz'" [hidden]="!editSaleMode" (clickEvent) = "onEditSale()"></app-button-small>
-          <app-button-small class="w-full sm:w-auto" [isFullWidth] = "true" [buttonText]="'Powrót'" [hidden]="!editSaleMode" (clickEvent) = "onCancelSale()"></app-button-small>
-
-        </div>
-      </div>
-      <div class="flex-1 flex flex-col gap-3 xl:h-full xl:min-h-0">
-
-        <div class="grid grid-cols-1 xl:grid-cols-3 gap-4 p-3">
-
-          <div class="bg-gray-50 rounded-xl p-5 border border-gray-100 flex flex-col justify-center">
-            <p class="text-xs text-gray-500 font-bold uppercase tracking-wider mb-1">Wartość całkowita</p>
-            <p class="text-3xl font-semibold text-gray-900">4 500,00 zł</p>
-          </div>
-
-          <div class="bg-green-50 rounded-xl p-5 border border-green-100 flex flex-col justify-center">
-            <p class="text-xs text-green-700 font-bold uppercase tracking-wider mb-1">Marża</p>
-            <div class="flex items-baseline gap-2">
-              <p class="text-3xl font-semibold text-green-700">+ 1 300,00 zł</p>
-              <p class="text-sm font-bold text-green-600/70">(28.8%)</p>
-            </div>
-          </div>
-
-          <div class="bg-yellow-50/50 rounded-xl p-4 border border-yellow-100 flex flex-col justify-center">
-            <div class="flex items-center gap-2 mb-1.5">
-              <svg class="w-4 h-4 text-yellow-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"></path></svg>
-              <p class="text-xs text-yellow-700 font-bold uppercase tracking-wider">Notatka</p>
-            </div>
-            <p class="text-sm text-yellow-800 font-medium italic">
-              Dostawa na rampę z tyłu budynku przed godziną 10:00. Płatność gotówką przy odbiorze.
-            </p>
-          </div>
-        </div>
-
-        <div class="flex-1 flex flex-col xl:min-h-0">
-          <div class="border border-gray-200 rounded-xl shadow-sm  xl:overflow-y-auto xl:min-h-0">
-            <table class="w-full text-left xl:min-h-0 ">
-              <thead class="bg-gray-50 border-b border-gray-200 text-xs uppercase tracking-wider text-gray-500 xl:sticky xl:top-0">
-              <tr>
-                <th class="py-1 px-4 font-bold">Produkt</th>
-                <th class="py-1 px-3 font-bold text-center">Ilość</th>
-                <th class="py-1 px-3 font-bold text-right">Cena jedn.</th>
-                <th class="hidden md:table-cell py-1 px-3 font-bold text-right bg-green-50/50">Marża / szt.</th>
-                <th class="py-3 px-4 font-bold text-right">Suma brutto</th>
-              </tr>
-              </thead>
-
-              <tbody class="divide-y divide-gray-100 bg-white">
-                @if (editSaleMode){
-                  <tr class="bg-green-50/30 shadow-sm transition-all">
-
-                    <td class="py-2 px-4">
-                      <div class="relative">
-                        <select class="w-full text-sm py-2 pl-3 pr-8 border border-gray-300 rounded-lg bg-white focus:outline-none focus:ring-2 focus:ring-primary/50 focus:border-primary shadow-sm font-semibold text-gray-800 appearance-none cursor-pointer transition-shadow">
-                          <option value="" disabled selected>Wybierz produkt z cennika klienta...</option>
-                          <option value="KIE-ZYW-01">Kiełbasa żywiecka premium — 24,50 zł</option>
-                          <option value="WED-300-101">Kabanosy krakus XL — 41,00 zł</option>
-                          <option value="SZY-DEB-05">Szynka dębowa (Kawałek) — 32,90 zł</option>
-                        </select>
-                        <svg class="w-4 h-4 text-gray-400 absolute right-3 top-2.5 pointer-events-none" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path></svg>
-                      </div>
-                    </td>
-
-                    <td class="py-2 px-4 text-center w-32">
-                      <div class="flex items-center justify-center gap-1.5">
-                        <input
-                          type="number"
-                          value="1"
-                          min="1"
-                          class="w-16 text-sm text-center py-2 border border-gray-300 rounded-lg bg-white focus:outline-none focus:ring-2 focus:ring-primary/50 focus:border-primary shadow-sm font-bold text-gray-900 transition-shadow"
-                        >
-                        <span class="text-xs text-gray-500 font-medium w-6 text-left">szt.</span>
-                      </div>
-                    </td>
-
-                    <td class="py-2 px-4 text-right text-gray-500 font-medium whitespace-nowrap">
-                      -- zł
-                    </td>
-
-                    <td class="py-2 px-4 text-right whitespace-nowrap">
-                      <span class="text-gray-400">--</span>
-                    </td>
-
-                    <td class="py-2 px-4 text-right whitespace-nowrap">
-                      <div class="flex items-center justify-end gap-2">
-                        <button class="p-1.5 text-gray-400 hover:text-red-600 hover:bg-red-50 rounded-lg transition-colors" title="Anuluj">
-                          <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path></svg>
-                        </button>
-
-                        <button class="p-1.5 border border-2 border-primary bg-white shadow hover:bg-primary hover:text-white rounded-lg transition-colors shadow-sm" title="Zatwierdź produkt">
-                          <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M5 13l4 4L19 7"></path></svg>
-                        </button>
-                      </div>
-                    </td>
-
-                  </tr>
+          <div class="flex flex-col gap-2">
+            @if (!editSaleMode) {
+              <h1 class="text-3xl font-semibold text-gray-900">{{sale.saleName}}</h1>
+            } @else {
+              <div [formGroup]="saleInfo" class="flex flex-col gap-2">
+                <input
+                  type="text"
+                  formControlName="saleName"
+                  placeholder="Wpisz nazwę własną lub nr referencyjny..."
+                  class="w-full sm:w-96 px-3 py-1.5  text-lg font-semibold text-gray-800 bg-white border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary/50 focus:border-primary outline-none shadow-sm transition-all"
+                >
+                @if(saleInfo.get('saleName')?.invalid && saleInfo.get('saleName')?.touched) {
+                  <span class="text-sm text-red-500 font-medium">Nazwa zamówienia jest wymagana</span>
                 }
-              <tr class="hover:bg-gray-50 transition-colors group">
-                <td class="flex py-2 px-2">
-                  <button class="px-3 py-2 text-sm text-gray-700 " [hidden]="!editSaleMode">
-                    <svg class="w-5 h-5 text-gray-500" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                      <path d="M3 6h18"></path>
-                      <path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path>
-                      <line x1="10" y1="11" x2="10" y2="17"></line>
-                      <line x1="14" y1="11" x2="14" y2="17"></line>
-                    </svg>
-                  </button>
-                  <div>
-                    <p class="font-semibold text-gray-900">Kiełbasa żywiecka premium</p>
-                    <p class="text-[13px] text-gray-400 font-mono mt-0.5">SKU: KIE-ZYW-01</p>
-                  </div>
-                </td>
-                <td class="py-2 px-3 text-center">
-                  <span class="font-semibold text-gray-800 px-2.5 py-1 rounded-md">100 kg</span>
-                </td>
-                <td class="py-2 px-3 text-right text-gray-600 font-medium">
-                  24,50 zł
-                </td>
-                <td class="py-2 px-3 text-right bg-green-50/30">
-                  <p class="font-bold text-green-600">+ 6,50 zł</p>
-                  <p class="text-[10px] font-medium text-green-600/70">26%</p>
-                </td>
-                <td class="py-2 px-3 text-right font-bold text-gray-900">
-                  2 450,00 zł
-                </td>
-              </tr>
+              </div>
+            }
 
-              <tr class="hover:bg-gray-50 transition-colors group">
-                <td class="py-2 px-2 flex">
-                  <button class="px-3 py-2 text-sm text-gray-700 " [hidden]="!editSaleMode">
-                    <svg class="w-5 h-5 text-gray-500" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                      <path d="M3 6h18"></path>
-                      <path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path>
-                      <line x1="10" y1="11" x2="10" y2="17"></line>
-                      <line x1="14" y1="11" x2="14" y2="17"></line>
-                    </svg>
-                  </button>
-                  <div>
-                    <p class="font-semibold text-gray-900">Kabanosy Krakus</p>
-                    <p class="text-[13px] text-gray-400 font-mono mt-0.5">SKU: KRAK-120-221</p>
-                  </div>
-                </td>
-                <td class="py-2 px-2 text-center">
-                  <span class="font-semibold text-gray-800 px-2.5 py-1 rounded-md">50 szt.</span>
-                </td>
-                <td class="py-2 px-3 text-right text-gray-600 font-medium">
-                  6,00 zł
-                </td>
-                <td class="py-2 px-3 text-right bg-green-50/30">
-                  <p class="font-bold text-green-600">+ 2,30 zł</p>
-                  <p class="text-[10px] font-medium text-green-600/70">30%</p>
-                </td>
-                <td class="py-2 px-3 text-right font-bold text-gray-900">
-                  300,00 zł
-                </td>
-              </tr>
-              <tr class="hover:bg-gray-50 transition-colors group">
-                <td class="py-2 px-2 flex">
-                  <button class="px-3 py-2 text-sm text-gray-700 " [hidden]="!editSaleMode">
-                    <svg class="w-5 h-5 text-gray-500" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                      <path d="M3 6h18"></path>
-                      <path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path>
-                      <line x1="10" y1="11" x2="10" y2="17"></line>
-                      <line x1="14" y1="11" x2="14" y2="17"></line>
-                    </svg>
-                  </button>
-                  <div>
-                    <p class="font-semibold text-gray-900">Mleko EKO</p>
-                    <p class="text-[13px] text-gray-400 font-mono mt-0.5">SKU: ML-EKO-431</p>
-                  </div>
-                </td>
-                <td class="py-2 px-3 text-center">
-                  <span class="font-semibold text-gray-800 px-2.5 py-1 rounded-md">40 szt.</span>
-                </td>
-                <td class="py-2 px-3 text-right text-gray-600 font-medium">
-                  7,00 zł
-                </td>
-                <td class="py-2 px-3 text-right bg-green-50/30">
-                  <p class="font-bold text-green-600">+ 1,50 zł</p>
-                  <p class="text-[10px] font-medium text-green-600/70">20%</p>
-                </td>
-                <td class="py-2 px-3 text-right font-bold text-gray-900">
-                  280,00 zł
-                </td>
-              </tr>
-              <tr class="hover:bg-gray-50 transition-colors group">
-                <td class="py-2 px-2 flex">
-                  <button class="px-3 py-2 text-sm text-gray-700" [hidden]="!editSaleMode">
-                    <svg class="w-5 h-5 text-gray-500" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                      <path d="M3 6h18"></path>
-                      <path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path>
-                      <line x1="10" y1="11" x2="10" y2="17"></line>
-                      <line x1="14" y1="11" x2="14" y2="17"></line>
-                    </svg>
-                  </button>
-                  <div>
-                    <p class="font-semibold text-gray-900">Marmolada BONA</p>
-                    <p class="text-[13px] text-gray-400 font-mono mt-0.5">SKU: MARM-BONA-213</p>
-                  </div>
-                </td>
-                <td class="py-2 px-3 text-center">
-                  <span class="font-semibold text-gray-800 px-2.5 py-1 rounded-md">20 kg</span>
-                </td>
-                <td class="py-2 px-3 text-right text-gray-600 font-medium">
-                  8,00 zł
-                </td>
-                <td class="py-2 px-3 text-right bg-green-50/30">
-                  <p class="font-bold text-green-600">+ 2,50 zł</p>
-                  <p class="text-[10px] font-medium text-green-600/70">32%</p>
-                </td>
-                <td class="py-2 px-3 text-right font-bold text-gray-900">
-                  160,00 zł
-                </td>
-              </tr>
+            <div class="flex gap-2 items-center">
+              <p class=" text-gray-500">Klient: <span class="font-semibold text-gray-800">{{sale.clientName}}</span></p>
+              <p>Utworzono: <span class="font-semibold text-gray-800">{{sale.createdAt | date}}</span></p>
+              <p>Status: <span class="font-semibold text-gray-800">{{sale.stage | formatEnum |lowercase}}</span></p>
+            </div>
+          </div>
 
+          <div class="flex items-center gap-4 flex-wrap">
+            <button class=" w-full sm:w-auto px-4 py-2 text-sm font-medium text-gray-700 bg-white border border-gray-200 rounded-lg hover:bg-gray-50 transition-colors flex items-center justify-center gap-2 shadow-sm">
+              <svg class="w-4 h-4 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 17h2a2 2 0 002-2v-4a2 2 0 00-2-2H5a2 2 0 00-2 2v4a2 2 0 002 2h2m2 4h6a2 2 0 002-2v-4a2 2 0 00-2-2H9a2 2 0 00-2 2v4a2 2 0 002 2zm8-12V5a2 2 0 00-2-2H9a2 2 0 00-2 2v4h10z"></path></svg>
+              Wydruk
+            </button>
 
-              </tbody>
-              <tfoot class="bg-gray-50 border-t border-gray-200 xl:sticky xl:bottom-0">
-              <tr>
-                <td colspan="3" class="py-3 px-4 text-right font-bold text-gray-500 uppercase text-sm tracking-wider">Razem:</td>
-                <td class="text-lg py-3 px-4 text-right font-bold text-green-600">+ 1 300,00 zł</td>
-                <td class="text-lg py-3 px-4 text-right font-bold text-gray-900 ">4 500,00 zł</td>
-              </tr>
-              </tfoot>
-
-            </table>
+            @switch (sale.stage) {
+              @case ('NOWA') {
+                <app-button-small class="w-full sm:w-auto" [isFullWidth]="true" [buttonText]="'Edytuj zamówienie'" [hidden]="editSaleMode" (clickEvent)="onEditSale()"></app-button-small>
+                <app-button-small class="w-full sm:w-auto" [isFullWidth]="true" [buttonText]="'Zapisz'" [hidden]="!editSaleMode" (clickEvent)="onSaveSale()"></app-button-small>
+                <app-button-small class="w-full sm:w-auto" [isFullWidth]="true" [buttonText]="'Powrót'" [hidden]="!editSaleMode" (clickEvent)="onCancelSale()"></app-button-small>
+                <app-button-small class="w-full sm:w-auto" [isFullWidth]="true" [hidden]="editSaleMode" [buttonText]="'Do magazynu'" (clickEvent)="isDateModalOpen = true;" ></app-button-small>
+                <app-button-small class="w-full sm:w-auto" [isFullWidth]="true" [hidden]="editSaleMode" [buttonText]="'Odrzuć'" (clickEvent)="cancelModalOpened = true" ></app-button-small>
+              }
+              @case ('DO_REALIZACJI') {
+                <span class="px-3 py-1.5 bg-yellow-100 text-yellow-800 rounded-md font-semibold text-sm">Oczekuje w kolejce na magazyn</span>
+              }
+              @case ('W_TRAKCIE_PAKOWANIA') {
+                <span class="px-3 py-1.5 bg-blue-100 text-blue-800 rounded-md font-semibold text-sm flex items-center gap-2">
+                <span class="w-2 h-2 rounded-full bg-blue-600 animate-pulse"></span> Magazyn pakuje...
+              </span>
+              }
+              @case ('SPAKOWANA') {
+                <app-button-small class="w-full sm:w-auto" [isFullWidth]="true" [buttonText]="'Zamknij (Sukces)'" (clickEvent)="changeStatus('ZAKONCZONA')"></app-button-small>
+                <app-button-small class="w-full sm:w-auto" [isFullWidth]="true" [buttonText]="'Zamknij (Braki)'" (clickEvent)="changeStatus('ZAKONCZONA_NIEKOMPLETNA')"></app-button-small>
+                <app-button-small class="w-full sm:w-auto" [isFullWidth]="true" [buttonText]="'Pełny zwrot'" (clickEvent)="changeStatus('ZWROCONA')"></app-button-small>
+              }
+              @default {
+                <span class="px-3 py-1 text-gray-500 font-medium">Zamówienie zamknięte</span>
+              }
+            }
           </div>
         </div>
 
-      </div>
+        <div class="flex-1 flex flex-col gap-3 xl:h-full xl:min-h-0">
+          <div class="grid grid-cols-1 xl:grid-cols-3 gap-4 p-3">
+            <div class="bg-gray-50 rounded-xl p-5 border border-gray-100 flex flex-col justify-center">
+              <p class="text-xs text-gray-500 font-bold uppercase tracking-wider mb-1">Wartość całkowita</p>
+              <p class="text-3xl font-semibold text-gray-900">{{ totalSum$ | async | number: '1.2-2' }} zł</p>
+            </div>
+            <div class="bg-green-50 rounded-xl p-5 border border-green-100 flex flex-col justify-center">
+              <p class="text-xs text-green-700 font-bold uppercase tracking-wider mb-1">Marża</p>
+              <div class="flex items-baseline gap-2">
+                <p class="text-3xl font-semibold text-green-700">--</p>
+                <p class="text-sm font-bold text-green-600/70">--</p>
+              </div>
+            </div>
+            <div class="bg-yellow-50/50 rounded-xl p-4 border border-yellow-100 flex flex-col justify-center">
+              <div class="flex items-center gap-2 mb-1.5">
+                <svg class="w-4 h-4 text-yellow-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"></path></svg>
+                <p class="text-xs text-yellow-700 font-bold uppercase tracking-wider">Notatka</p>
+              </div>
+              <p class="text-sm text-yellow-800 font-medium italic">{{sale.saleData}}</p>
+            </div>
+          </div>
+
+          <div class="flex-1 flex flex-col xl:min-h-0 px-3 pb-3">
+            <div class="border border-gray-200 rounded-xl shadow-sm flex flex-col xl:min-h-0 bg-white">
+
+              @if (editSaleMode) {
+                <div class="p-3 border-b border-gray-100 flex flex-wrap items-center justify-between shrink-0 rounded-t-xl">
+                  <h3 class="font-bold text-gray-800 text-base ml-2">Pozycje zamówienia</h3>
+                  <div class="flex bg-gray-100 p-1 rounded-lg">
+                    <button type="button" (click)="addMode = 'list'" [class]="addMode === 'list' ? 'bg-white shadow-sm text-gray-900 font-bold' : 'text-gray-500 hover:text-gray-700 font-medium'" class="px-3 py-1.5 text-xs rounded-md transition-all flex items-center gap-1.5">
+                      <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 10h16M4 14h16M4 18h16"></path></svg> Z cennika
+                    </button>
+                    <button type="button" (click)="addMode = 'scratch'" [class]="addMode === 'scratch' ? 'bg-white shadow-sm text-blue-700 font-bold' : 'text-gray-500 hover:text-gray-700 font-medium'" class="px-3 py-1.5 text-xs rounded-md transition-all flex items-center gap-1.5">
+                      <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"></path></svg> Jednorazowy
+                    </button>
+                  </div>
+                </div>
+              }
+
+              <div class="xl:overflow-y-auto xl:min-h-0">
+                <table class="w-full text-left xl:min-h-0">
+                  <thead class="bg-gray-50 border-b border-gray-200 text-xs uppercase tracking-wider text-gray-500 xl:sticky xl:top-0 z-20">
+                  <tr>
+                    <th class="py-3 px-4 font-bold">Produkt</th>
+                    <th class="py-3 px-3 font-bold text-center">Ilość</th>
+                    <th class="py-3 px-3 font-bold text-right">Cena jedn.</th>
+                    <th class="hidden md:table-cell py-3 px-3 font-bold text-right bg-green-50/50">Marża / szt.</th>
+                    <th class="py-3 px-4 font-bold text-right">Suma brutto</th>
+                  </tr>
+                  </thead>
+
+                  <tbody class="divide-y divide-gray-100 bg-white">
+                    @if (editSaleMode) {
+                      @if(addMode === "list"){
+                        <tr class="bg-green-50/30 shadow-sm transition-all" [formGroup]="itemForm">
+                          <td class="py-2 px-4">
+                            <select formControlName="prodId" class="w-full text-sm py-2 px-3 border border-gray-300 rounded-lg bg-white focus:outline-none focus:ring-2 focus:ring-primary/50 focus:border-primary">
+                              <option [ngValue]="''" disabled selected>Wybierz produkt z cennika...</option>
+                              @for(item of (latestPrices | async); track item.id){
+                                <option [value]="item.id">{{item.name}}</option>
+                              }
+                            </select>
+                          </td>
+                          <td class="py-2 px-4 text-center w-36">
+                            <div class="flex items-center justify-center gap-1.5">
+                              <input type="number" formControlName="amount" min="1" class="w-16 text-sm text-center py-2 border border-gray-300 rounded-lg bg-white focus:outline-none focus:ring-2 focus:ring-primary/50 font-bold">
+                              <span class="text-gray-500 font-medium w-6 text-left text-xs uppercase">
+                              @if(selectedProduct) { {{ selectedProduct.unit }} }
+                            </span>
+                            </div>
+                          </td>
+                          <td class="py-2 px-4 text-right text-gray-500 font-medium whitespace-nowrap">
+                            @if(selectedProduct) { {{ selectedProduct.unitPrice | number:'1.2-2' }} zł } @else { -- zł }
+                          </td>
+                          <td class="hidden md:table-cell py-2 px-4 text-right whitespace-nowrap"><span class="text-gray-400">--</span></td>
+                          <td class="py-2 px-4 text-right whitespace-nowrap">
+                            <div class="flex items-center justify-end gap-4">
+                            <span class="font-bold text-gray-900 text-sm">
+                              @if(selectedProduct && itemForm.get('amount')?.value) {
+                                {{ (+selectedProduct.unitPrice * itemForm.get('amount')?.value) | number:'1.2-2' }} zł
+                              } @else { 0.00 zł }
+                            </span>
+                              <app-button-small title="Zatwierdź produkt" [disabled]="itemForm.invalid" (clickEvent)="onAddItem()" [buttonText]="'Dodaj'"></app-button-small>
+                            </div>
+                          </td>
+                        </tr>
+                      }
+                      @else {
+                        <tr class="bg-blue-50/20 shadow-sm transition-all" [formGroup]="scratchItemForm">
+                          <td class="py-2 px-4 flex flex-col gap-2">
+                            <input type="text" formControlName="name" placeholder="Wpisz nazwę produktu..." class="w-full text-sm py-2 px-3 border border-gray-300 rounded-lg bg-white focus:ring-2 focus:ring-blue-500 font-semibold">
+                            <input type="text" formControlName="internal" placeholder="Wpisz nazwe magazynową..." class="w-full text-sm py-2 px-3 border border-gray-300 rounded-lg bg-white focus:ring-2 focus:ring-blue-500 font-semibold">
+                          </td>
+                          <td class="py-2 px-4 text-center w-48">
+                            <div class="flex items-center justify-center gap-2">
+                              <input type="number" formControlName="amount" placeholder="0.0" min="0.1" class="w-16 text-sm text-center py-2 border border-gray-300 rounded-lg bg-white focus:ring-2 focus:ring-blue-500 font-bold">
+                              <select formControlName="unit" class="font-semibold text-gray-500 text-sm py-2 border border-gray-300 rounded-lg bg-white focus:ring-2 focus:ring-blue-500 cursor-pointer">
+                                <option [ngValue]="null" disabled selected>Jm.</option>
+                                @for (unit of availableUnits; track unit) {
+                                  <option [value]="unit">{{ unit | lowercase }}</option>
+                                }
+                              </select>
+                            </div>
+                          </td>
+                          <td class="py-2 px-4 text-right">
+                            <div class="relative flex justify-end">
+                              <input type="number" formControlName="unitPrice" placeholder="0.00" min="0" class="w-24 text-sm text-right py-2 pr-6 border border-gray-300 rounded-lg bg-white focus:ring-2 focus:ring-blue-500 font-bold">
+                              <span class="absolute right-2.5 top-2.5 text-xs text-gray-500 font-bold pointer-events-none">zł</span>
+                            </div>
+                          </td>
+                          <td class="hidden md:table-cell py-3 px-4 text-right whitespace-nowrap text-gray-400 font-medium">-- zł</td>
+                          <td class="py-3 px-4 text-right whitespace-nowrap">
+                            <div class="flex items-center justify-end gap-4">
+                            <span class="font-bold text-gray-900 text-sm">
+                              @if(scratchItemForm.get('amount')?.value && scratchItemForm.get('unitPrice')?.value) {
+                                {{ (scratchItemForm.get('amount')?.value * scratchItemForm.get('unitPrice')?.value) | number:'1.2-2' }} zł
+                              } @else { 0.00 zł }
+                            </span>
+                              <app-button-small title="Zatwierdź produkt" [disabled]="scratchItemForm.invalid" (clickEvent)="onAddScratchItem()" [buttonText]="'Dodaj'"></app-button-small>
+                            </div>
+                          </td>
+                        </tr>
+                      }
+                    }
+
+                    @for(saleItem of (_itemsState | async); track $index){
+                      <tr class="hover:bg-gray-50 transition-colors group">
+                        <td class="flex py-2 px-2 items-center">
+                          <button class="px-3 py-2 text-sm text-gray-400 hover:text-red-500" [hidden]="!editSaleMode" (click)="onDeleteItem(saleItem.prodId, $index)">
+                            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"></path></svg>
+                          </button>
+                          <div class="ml-2">
+                            <p class="font-semibold text-gray-900">{{saleItem.name}}</p>
+                            <p class="text-sm text-gray-400 mt-0.5">{{ saleItem.internal}}</p>
+                          </div>
+                        </td>
+                        <td class="py-2 px-3 text-center">
+                          <span class="font-semibold text-gray-800 px-2.5 py-1 rounded-md">{{saleItem.amount}} {{saleItem.unit | lowercase}}</span>
+                        </td>
+                        <td class="py-2 px-3 text-right text-gray-600 font-medium">
+                          {{saleItem.unitPrice | number: '1.2-2'}} zł
+                        </td>
+                        <td class="hidden md:table-cell py-2 px-3 text-right bg-green-50/30">
+                          <p class="font-bold text-green-600">--</p>
+                          <p class="text-[10px] font-medium text-green-600/70">--</p>
+                        </td>
+                        <td class="py-2 px-3 text-right font-bold text-gray-900">
+                          {{saleItem.sum | number: '1.2-2' }} zł
+                        </td>
+                      </tr>
+                    }
+                  </tbody>
+
+                  <tfoot class="bg-gray-50 border-t border-gray-200 xl:sticky xl:bottom-0">
+                  <tr>
+                    <td colspan="3" class="py-3 px-4 text-right font-bold text-gray-500 uppercase text-sm tracking-wider">Razem:</td>
+                    <td class="hidden md:table-cell text-lg py-3 px-4 text-right font-bold text-green-600">--</td>
+                    <td class="text-lg py-3 px-4 text-right font-bold text-gray-900 ">{{ totalSum$ | async | number: '1.2-2' }} zł</td>
+                  </tr>
+                  </tfoot>
+
+                </table>
+              </div>
+            </div>
+          </div>
+
+        </div>
+      }
     </div>
   </div>
+
+  @if (isDateModalOpen) {
+    <div class="fixed inset-0 bg-black/50 z-50 flex items-center justify-center backdrop-blur-sm">
+      <div class="bg-white rounded-xl shadow-xl w-full max-w-md p-6 animate-fade-in-up">
+        <h3 class="text-xl font-bold text-gray-900 mb-2">Zleć pakowanie</h3>
+        <p class="text-gray-500 text-sm mb-6">Wybierz datę, kiedy magazyn powinien skompletować to zamówienie.</p>
+        <div class="mb-6">
+          <label class="block font-semibold text-gray-700 mb-1.5">Data realizacji</label>
+          <input type="date" [(ngModel)]="targetDate" class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary focus:outline-none">
+        </div>
+        <div class="flex justify-end gap-3">
+          <button (click)="isDateModalOpen = false" class="px-4 py-2 text-gray-600 hover:bg-gray-100 rounded-lg font-semibold transition-colors">Anuluj</button>
+          <app-button-small [buttonText]="'Przekaż do magazynu'" (clickEvent)="confirmOperation('DO_REALIZACJI')" [disabled]="!targetDate"></app-button-small>
+        </div>
+      </div>
+    </div>
+  }
+
+  @if(cancelModalOpened){
+    <div class="fixed inset-0 bg-black/50 z-50 flex items-center justify-center backdrop-blur-sm">
+      <div class="bg-white rounded-xl shadow-xl w-full max-w-md p-6 animate-fade-in-up">
+        <h3 class="text-xl font-bold text-gray-900 mb-2">Na pewno chcesz odrzucić oferte?</h3>
+        <p class="text-gray-500 text-sm mb-6">Po tej operacji zamówienie będzie dostępne jedynie do odczytu.</p>
+        <div class="flex justify-end gap-5">
+          <button (click)="cancelModalOpened = false" class="px-4 py-2 text-gray-600 hover:bg-gray-100 rounded-lg font-semibold transition-colors">Anuluj</button>
+          <app-button-small [buttonText]="'Odrzuć'" (clickEvent)="confirmOperation('ODRZUCONA')"></app-button-small>
+        </div>
+      </div>
+    </div>
+  }
+
+  @if (notification.show) {
+    <div class="fixed bottom-6 right-6 z-50 flex items-center gap-3 px-4 py-3 rounded-xl shadow-lg border animate-fade-in-up transition-all" [class]="notification.type === 'success' ? 'bg-green-50 border-green-200 text-green-800' : 'bg-red-50 border-red-200 text-red-800'">
+      <p class="font-semibold text-sm mr-2">{{ notification.message }}</p>
+      <button (click)="notification.show = false" class="p-1 hover:bg-black/5 rounded-md transition-colors">
+        <svg class="w-4 h-4 opacity-50" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path></svg>
+      </button>
+    </div>
+  }
 </div>
