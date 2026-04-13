@@ -1,5 +1,5 @@
-import {ListProduct} from '../../pricelist/models/PriceList';
 import {ListItem} from '../../pricelist/models/price-list-response';
+import {SaleStages} from '../../sale/models/Stage.model';
 
 export interface ClientDashboardInfo{
   clientInfo: ClientWidgetInfo,
@@ -16,7 +16,8 @@ export interface ClientWidgetInfo{
 
 export interface ShortSaleResp{
   saleId: string,
-  saleData: string,
-  stage: string,
-  sumPrice: string
+  saleName: string,
+  stage: SaleStages,
+  sumPrice: string,
+  clientName: string,
 }

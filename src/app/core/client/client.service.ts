@@ -6,13 +6,14 @@ import {ClientShortResp} from './models/client-short-resp';
 import {ClientDashboardInfo} from './models/client-dashboard-info';
 import {Router} from '@angular/router';
 import {UserStateService} from '../user/user-state.service';
+import {environment} from '../../../environments/environment';
 
 
 @Injectable({
   providedIn: 'root'
 })
 export class ClientService{
-  private baseUrl: string = 'http://localhost:8080/Crm/client';
+  private baseUrl: string = `${environment.apiUrl}/client`;
   private _clientState = new BehaviorSubject<null | ClientResponse>(null);
   public clientState = this._clientState.asObservable();
   constructor(private client: HttpClient,private router: Router,private userState: UserStateService){}
