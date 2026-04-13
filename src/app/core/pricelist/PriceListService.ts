@@ -5,17 +5,17 @@ import {ListItem, PriceListResponse} from './models/price-list-response';
 import {PriceListShort} from './models/price-list-short';
 import {tap} from 'rxjs';
 import {PriceListUpdate} from './models/price-list-update';
+import {environment} from '../../../environments/environment';
 
 @Injectable({
   providedIn: "root"
 })
 export class PriceListService{
-  private baseUrl = 'http://localhost:8080/Crm/prices'
+  private baseUrl = `${environment.apiUrl}/prices`
   constructor(private client: HttpClient) {}
 
 
   createPriceList(priceList: PriceList){
-    console.log(priceList);
     return this.client.post<PriceListResponse>(this.baseUrl,priceList);
   }
 
@@ -31,6 +31,10 @@ export class PriceListService{
         console.log(value);
       })
     );
+  }
+  getLatestItemsByClientId(clientId: string){
+    const url = this.baseUrl + '/client/' + clientId;
+    return this.client.get<ListItem[]>(url);
   }
 
   updateListItems(listItems: ListItem[], priceListId: string){

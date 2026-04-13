@@ -9,6 +9,7 @@ export interface PriceList{
 }
 export interface ListProduct{
   name: string,
+  internalName: string,
   unitPrice: string,
   unit: ProductUnit,
   prodCategory: Category

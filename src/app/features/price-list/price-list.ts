@@ -8,11 +8,9 @@ import {RouterLink} from '@angular/router';
 import {PriceListService} from '../../core/pricelist/PriceListService';
 import {PriceListShort} from '../../core/pricelist/models/price-list-short';
 import {ListItem} from '../../core/pricelist/models/price-list-response';
-import {ListProduct} from '../../core/pricelist/models/PriceList';
 import {FormBuilder, FormGroup, ReactiveFormsModule, Validators} from '@angular/forms';
 import {PRODUCT_UNITS} from '../../core/pricelist/models/unit.model';
 import {CATEGORIES} from '../../core/pricelist/models/category.model';
-import {list} from 'postcss';
 
 @Component({
   selector: 'app-price-list',
@@ -43,6 +41,7 @@ export class PriceList{
   constructor(public userState: UserStateService,private priceService: PriceListService, private fb: FormBuilder) {
     this.newItemForm = this.fb.group({
         name: ['', Validators.required],
+        internalName: ['', Validators.required],
         unitPrice: [null, [Validators.required, Validators.min(0)]],
         unit: [null, [Validators.required]],
         category: [null, [Validators.required]]
@@ -59,11 +58,9 @@ export class PriceList{
   }
   onSaveList(){
     const updatedProducts = this.productSubject.getValue();
-    console.log(updatedProducts);
 
     this.priceService.updateListItems(updatedProducts,this.selectedListId!).subscribe({
       next: (resp)=> {
-        console.log(resp);
         this.editPriceListMode = false;
         this.productSubject.next(resp.productsList)
       },
@@ -119,10 +116,11 @@ export class PriceList{
 
   onAddItem(){
     if(this.newItemForm.valid){
-      const { name, unitPrice, unit,category } = this.newItemForm.value;
+      const { name, unitPrice, unit,category, internalName } = this.newItemForm.value;
 
       const listItem: ListItem = {
         id: null,
+        internal: internalName,
         name: name,
         unitPrice: unitPrice,
         category: category,
