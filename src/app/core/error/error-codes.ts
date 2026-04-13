@@ -10,5 +10,7 @@ export const ERROR_MESSAGES: Record<string,string> ={
   'USER_NOT_FOUND' : 'Użytkownik nie istnieje',
   'USER_ALREADY_EXISTS' : 'Użytkownik już istnieje (email jest unikalny)',
   'ARGUMENT_TYPE_MISMATCH': 'Nieprawidłowy argument',
+  'EMPTY_SALE_ITEMS': 'Lista produktów zamówienia jest pusta',
+  'INVALID_SALE_DATE': 'Data zamówienia nie może być w przeszłości',
   'GENERIC_ERROR' : 'Wystąpił nieoczekiwany błąd'
 };
