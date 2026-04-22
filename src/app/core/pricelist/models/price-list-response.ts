@@ -13,6 +13,8 @@ export interface ListItem{
   name: string,
   internal: string,
   unitPrice: string,
-  category: Category,
-  unit: ProductUnit
+  unit: ProductUnit,
+  producer: string
+  tps: string,
+  pack: string
 }

@@ -12,5 +12,7 @@ export interface ListProduct{
   internalName: string,
   unitPrice: string,
   unit: ProductUnit,
-  prodCategory: Category
+  // producer: string,
+  tps: string,
+  package: string,
 }

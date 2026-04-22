@@ -6,6 +6,7 @@ import {PriceListShort} from './models/price-list-short';
 import {tap} from 'rxjs';
 import {PriceListUpdate} from './models/price-list-update';
 import {environment} from '../../../environments/environment';
+import {BasePriceList, BasePriceListResponse} from './models/BasePrice-list';
 
 @Injectable({
   providedIn: "root"
@@ -17,6 +18,16 @@ export class PriceListService{
 
   createPriceList(priceList: PriceList){
     return this.client.post<PriceListResponse>(this.baseUrl,priceList);
+  }
+
+  patchBasePriceList(baseList: BasePriceList){
+    const url = this.baseUrl + '/base'
+    return this.client.patch<BasePriceListResponse>(url,baseList);
+  }
+
+  getBasePriceList(){
+    const url = this.baseUrl + '/base'
+    return this.client.get<BasePriceListResponse>(url);
   }
 
   getPriceListByClientId(clientId: string){

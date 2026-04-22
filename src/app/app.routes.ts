@@ -21,11 +21,15 @@ const commonRoutes: Routes = [
   },
   {
     path: 'prices',
-    loadComponent: () => import("./features/price-list/price-list").then(c => c.PriceList)
+    loadComponent: () => import("./features/price-list/base-pricelist/base-pricelist").then(c => c.BasePricelist)
   },
   {
     path: 'prices/new/:id',
     loadComponent: () => import("./features/price-list/price-list-creation/price-list-creation").then(c => c.PriceListCreation)
+  },
+  {
+    path: 'prices/individual',
+    loadComponent: () => import("./features/price-list/price-list").then(c => c.PriceList)
   }
 ]
 export const routes: Routes = [
