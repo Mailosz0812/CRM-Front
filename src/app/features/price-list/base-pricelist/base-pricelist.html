@@ -187,4 +187,10 @@
       </div>
     </div>
   </div>
+  @if(notificationState.show){
+  <app-notification
+    [message]="notificationState.message"
+    [type]="notificationState.type"
+    (closeEvent)="notificationState.show = false"/>
+  }
 </div>

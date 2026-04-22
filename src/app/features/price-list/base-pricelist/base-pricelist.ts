@@ -8,6 +8,8 @@ import {FormatEnumPipe} from '../../../shared/format-enum-pipe';
 import {BasePriceList, BasePriceListResponse} from '../../../core/pricelist/models/BasePrice-list';
 import {PriceListService} from '../../../core/pricelist/PriceListService';
 import {BehaviorSubject, combineLatest, EMPTY, map, Observable} from 'rxjs';
+import {Notification} from '../../../shared/notification/notification';
+import {NotificationState} from '../../../shared/notification/NotificationState';
 
 @Component({
   selector: 'app-base-pricelist',
@@ -18,7 +20,8 @@ import {BehaviorSubject, combineLatest, EMPTY, map, Observable} from 'rxjs';
     DatePipe,
     ReactiveFormsModule,
     FormatEnumPipe,
-    AsyncPipe
+    AsyncPipe,
+    Notification
   ],
   templateUrl: './base-pricelist.html',
 })
@@ -28,6 +31,11 @@ export class BasePricelist implements OnInit{
     productList: []
   });
   private localChanges = new BehaviorSubject<Map<string,ListItem>>(new Map<string, ListItem>())
+  notificationState: NotificationState = {
+    show: false,
+    message: '',
+    type: 'success'
+  };
 
 
   products$:Observable<ListItem[]> = combineLatest([this.apiItems,this.localChanges]).pipe(
@@ -65,7 +73,8 @@ export class BasePricelist implements OnInit{
       next: (resp) =>{
         this.apiItems.next(resp)
       },error: (err) =>{
-        console.log(err);
+        this.triggerNotification('error',
+          'Wystąpił błąd podczas ładowania cennika')
       }
     })
   }
@@ -113,10 +122,10 @@ export class BasePricelist implements OnInit{
         this.apiItems.next(resp);
         this.localChanges.next(new Map());
         this.cdr.detectChanges();
+        this.triggerNotification('success','Cennik zapisany pomyślnie')
       },
       error: (err) => {
-        console.log(err);
-      //   Show notification
+        this.triggerNotification('error',err.message);
       }
     });
   }
@@ -151,6 +160,19 @@ export class BasePricelist implements OnInit{
 
     this.form.reset();
     this.onEditMode = false;
+  }
+
+  triggerNotification(type: 'success' | 'error', message: string) {
+    this.notificationState = {
+      show: true,
+      type: type,
+      message: message
+    };
+
+    setTimeout(() => {
+      this.notificationState.show = false;
+      this.cdr.detectChanges();
+    }, 5000);
   }
 
 }
