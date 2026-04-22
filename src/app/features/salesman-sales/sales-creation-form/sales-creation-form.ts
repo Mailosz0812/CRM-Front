@@ -1,4 +1,4 @@
-import {Component, OnInit} from '@angular/core';
+import {ChangeDetectorRef, Component, OnInit} from '@angular/core';
 import {FormBuilder, FormGroup, ReactiveFormsModule, Validators} from '@angular/forms';
 import {PriceListService} from '../../../core/pricelist/PriceListService';
 import {ClientService} from '../../../core/client/client.service';
@@ -11,6 +11,8 @@ import {SaleCreationReq, SaleItem, SaleScratchItem} from '../../../core/sale/mod
 import {SaleItemView} from '../../../core/sale/models/SaleItemView';
 import {SaleService} from '../../../core/sale/SaleService';
 import {CartEntry, PriceListModal} from '../price-list-modal/price-list-modal';
+import {Notification} from '../../../shared/notification/notification';
+import {NotificationState} from '../../../shared/notification/NotificationState';
 
 @Component({
   selector: 'app-sales-creation-form',
@@ -20,7 +22,8 @@ import {CartEntry, PriceListModal} from '../price-list-modal/price-list-modal';
     CurrencyPipe,
     LowerCasePipe,
     DecimalPipe,
-    PriceListModal
+    PriceListModal,
+    Notification
   ],
   templateUrl: './sales-creation-form.html',
 })
@@ -42,15 +45,16 @@ export class SalesCreationForm implements OnInit{
 
   saleViewItems: SaleItemView[] = [];
 
-  notification: { show: boolean; type: 'success' | 'error'; message: string } = {
+  notificationState: NotificationState = {
     show: false,
-    type: 'success',
-    message: ''
+    message: '',
+    type: 'success'
   };
 
   readonly availableUnits = PRODUCT_UNITS;
   constructor(private fb: FormBuilder,private priceService: PriceListService,
-              private clientService: ClientService,private saleService: SaleService) {
+              private clientService: ClientService,private saleService: SaleService,
+              private cdr: ChangeDetectorRef) {
     this.infoForm = fb.group({
       saleName: ['',Validators.required],
       clientId: ['', Validators.required],
@@ -172,7 +176,7 @@ export class SalesCreationForm implements OnInit{
 
   onCreateSale(){
     if (this.infoForm.invalid || this.saleViewItems.length === 0) {
-      this.showNotification('error', 'Formularz jest niekompletny lub brak pozycji.');
+      this.triggerNotification('error', 'Formularz jest niekompletny lub brak pozycji.');
       return;
     }
     const {saleName, clientId, note, warehouseNote } = this.infoForm.value;
@@ -206,19 +210,24 @@ export class SalesCreationForm implements OnInit{
         this.newScratchItem.reset();
         this.infoForm.reset();
         this.saleViewItems = [];
-        this.showNotification('success', 'Zamówienie zostało utworzone pomyślnie!');
+        this.triggerNotification('success', 'Zamówienie zostało utworzone pomyślnie!');
       },
       error: (err: Error) => {
-        this.showNotification('error', err.message);
+        this.triggerNotification('error', err.message);
       }
     })
   }
-  showNotification(type: 'success' | 'error', message: string) {
-    this.notification = { show: true, type, message };
+  triggerNotification(type: 'success' | 'error', message: string) {
+    this.notificationState = {
+      show: true,
+      type: type,
+      message: message
+    };
 
     setTimeout(() => {
-      this.notification.show = false;
-    }, 4000);
+      this.notificationState.show = false;
+      this.cdr.detectChanges();
+    }, 5000);
   }
   private getScratchItems() {
     return this.saleViewItems.filter((item) => !item.prodId);

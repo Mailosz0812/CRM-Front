@@ -128,31 +128,10 @@
 
     </div>
   </div>
-  @if (notification().show) {
-    <div
-      class="fixed bottom-6 right-6 z-50 flex items-center gap-3 px-4 py-3 rounded-xl shadow-lg border animate-fade-in-up transition-all"
-      [class]="notification().type === 'success' ? 'bg-green-50 border-green-200 text-green-800' : 'bg-red-50 border-red-200 text-red-800'"
-    >
-      @if (notification().type === 'success') {
-        <div class="p-1 bg-green-100 rounded-full text-green-600">
-          <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path></svg>
-        </div>
-      }
-
-      @if (notification().type === 'error') {
-        <div class="p-1 bg-red-100 rounded-full text-red-600">
-          <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path></svg>
-        </div>
-      }
-
-      <p class="font-semibold text-sm mr-2">{{ notification().message }}</p>
-
-      <button
-        (click)="closeNotification()"
-        class="p-1 hover:bg-black/5 rounded-md transition-colors"
-      >
-        <svg class="w-4 h-4 opacity-50" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path></svg>
-      </button>
-    </div>
+  @if(notificationState.show){
+    <app-notification
+      [message]="notificationState.message"
+      [type]="notificationState.type"
+      (closeEvent)="notificationState.show = false"/>
   }
 </div>
