@@ -10,6 +10,7 @@ import {PriceListService} from '../../../core/pricelist/PriceListService';
 import {BehaviorSubject, combineLatest, EMPTY, map, Observable} from 'rxjs';
 import {Notification} from '../../../shared/notification/notification';
 import {NotificationState} from '../../../shared/notification/NotificationState';
+import {ProductService} from '../../../core/pricelist/ProductService';
 
 @Component({
   selector: 'app-base-pricelist',
@@ -37,25 +38,52 @@ export class BasePricelist implements OnInit{
     type: 'success'
   };
 
+  private searchTerm$ = new BehaviorSubject<string>('');
+  private selectedProducer$ = new BehaviorSubject<string | null>(null);
+  private selectedDate$ = new BehaviorSubject<string | null>(null);
 
-  products$:Observable<ListItem[]> = combineLatest([this.apiItems,this.localChanges]).pipe(
-    map(([base, changes]) => {
-      const updatedItems = base.productList.map( item => {
-        return changes.has(item.id!) ? {...item, ...changes.get(item.id!)} : item;
-      });
 
+  products$: Observable<ListItem[]> = combineLatest([
+    this.apiItems,
+    this.localChanges,
+    this.searchTerm$,
+    this.selectedProducer$,
+    this.selectedDate$
+  ]).pipe(
+    map(([base, changes, term, producer, date]) => {
+      let combined = base.productList.map(item =>
+        changes.has(item.id!) ? { ...item, ...changes.get(item.id!) } : item
+      );
       const newItems = Array.from(changes.values()).filter(c => c.id?.toString().startsWith('new-'));
+      let list = [...newItems, ...combined];
 
-      return [... updatedItems, ... newItems]
+      if (term) {
+        const lowTerm = term.toLowerCase();
+        list = list.filter(i =>
+          i.name.toLowerCase().includes(lowTerm) ||
+          i.internal?.toLowerCase().includes(lowTerm)
+        );
+      }
+
+      if (producer) {
+        list = list.filter(i => i.producer === producer);
+      }
+
+      if (date) {
+        list = list.filter(i => i.tps?.startsWith(date));
+      }
+
+      return list;
     })
-  )
+  );
+  producers$ = new BehaviorSubject<Set<string>>(new Set());
   form!: FormGroup;
   onEditMode = false;
 
   availableUnits = PRODUCT_UNITS;
 
   constructor(private fb: FormBuilder, private priceService: PriceListService,
-              private cdr: ChangeDetectorRef) {}
+              private cdr: ChangeDetectorRef, private productService: ProductService) {}
 
   ngOnInit(): void {
     this.form = this.fb.group({
@@ -77,6 +105,12 @@ export class BasePricelist implements OnInit{
           'Wystąpił błąd podczas ładowania cennika')
       }
     })
+    this.productService.getProducts().subscribe({
+      next: (resp) =>{
+        this.producers$.next(new Set([...resp]));
+      }
+    })
+
   }
 
   onAddItem(){
@@ -91,10 +125,15 @@ export class BasePricelist implements OnInit{
       tps: formatDate,
       id: tempId
     }
+    if(!this.producers$.value.has(item.producer)){
+      const currMap = this.producers$.value
+      currMap.add(item.producer);
+      this.producers$.next(new Set(currMap));
+    }
 
     const currItems = this.localChanges.value;
     currItems.set(tempId,item)
-    this.localChanges.next(currItems);
+    this.localChanges.next(new Map(currItems));
     this.form.reset();
     this.cdr.detectChanges();
   }
@@ -152,6 +191,11 @@ export class BasePricelist implements OnInit{
       ...value,
       tps: tps
     };
+    if(!this.producers$.value.has(item.producer)){
+      const currMap = this.producers$.value
+      currMap.add(item.producer);
+      this.producers$.next(new Set(currMap));
+    }
 
     const currMap = this.localChanges.getValue();
     currMap
@@ -160,6 +204,20 @@ export class BasePricelist implements OnInit{
 
     this.form.reset();
     this.onEditMode = false;
+  }
+  onSearchChange(event: Event) {
+    const value = (event.target as HTMLInputElement).value;
+    this.searchTerm$.next(value);
+  }
+
+  onProducerChange(event: Event) {
+    const value = (event.target as HTMLSelectElement).value;
+    this.selectedProducer$.next(value === 'null' ? null : value);
+  }
+
+  onDateChange(event: Event) {
+    const value = (event.target as HTMLInputElement).value;
+    this.selectedDate$.next(value || null);
   }
 
   triggerNotification(type: 'success' | 'error', message: string) {

@@ -56,4 +56,5 @@ export class PriceListService{
     }
     return this.client.patch<PriceListResponse>(url,updateReq);
   }
+
 }
