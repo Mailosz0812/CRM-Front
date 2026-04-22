@@ -120,8 +120,7 @@
               <input
                 type="text"
                 placeholder="Np. Krakowska Sucha"
-                [class.ring-red-300]="form.get('name')?.touched && form.get('name')?.invalid"
-                [class.ring-2]="form.get('name')?.touched && form.get('name')?.invalid"
+                [class.invalid]="form.get('name')?.touched && form.get('name')?.invalid"
                 class="w-full px-3 py-2 bg-white border rounded border-gray-300  focus:ring-2 focus:ring-primary/20 focus:border-primary outline-none text-sm placeholder:italic mb-3"
                 formControlName="name"
               />
@@ -129,8 +128,7 @@
                 type="text"
                 placeholder="Np. SKU-123#"
                 class="w-full px-3 py-2 bg-white border rounded border-gray-300  focus:ring-2 focus:ring-primary/20 focus:border-primary outline-none text-sm placeholder:italic"
-                [class.ring-red-300]="form.get('internal')?.touched && form.get('internal')?.invalid"
-                [class.ring-2]="form.get('internal')?.touched && form.get('internal')?.invalid"
+                [class.invalid]="form.get('internal')?.touched && form.get('internal')?.invalid"
                 formControlName="internal"
               />
             </td>
@@ -138,8 +136,7 @@
               <select
                 class="w-full px-2 py-2 bg-white border rounded border-gray-300  focus:ring-2 focus:ring-primary/20 focus:border-primary outline-none text-sm"
                 formControlName="producer"
-                [class.ring-red-300]="form.get('producer')?.touched && form.get('producer')?.invalid"
-                [class.ring-2]="form.get('producer')?.touched && form.get('producer')?.invalid"
+                [class.invalid]="form.get('producer')?.touched && form.get('producer')?.invalid"
               >
                 <option selected [ngValue]="null" disabled>Producent...</option>
                 <option value="JBB" >JBB</option>
@@ -150,8 +147,7 @@
               <select
                 class="w-full px-2 py-2 bg-white border rounded border-gray-300  focus:ring-2 focus:ring-primary/20 focus:border-primary outline-none text-sm"
                 formControlName="unit"
-                [class.ring-red-300]="form.get('unit')?.touched && form.get('unit')?.invalid"
-                [class.ring-2]="form.get('unit')?.touched && form.get('unit')?.invalid"
+                [class.invalid]="form.get('unit')?.touched && form.get('unit')?.invalid"
               >
                 <option [ngValue]="null" disabled selected>Wybierz jednostkę...</option>
                 @for(unit of availableUnits; track unit){
@@ -174,16 +170,14 @@
                 step="0.01"
                 class="w-full pl-6 pr-2 py-2 bg-white border rounded border-gray-300  focus:ring-2 focus:ring-primary/20 focus:border-primary outline-none text-sm font-semibold text-right"
                 formControlName="unitPrice"
-                [class.ring-red-300]="form.get('unitPrice')?.touched && form.get('unitPrice')?.invalid"
-                [class.ring-2]="form.get('unitPrice')?.touched && form.get('unitPrice')?.invalid"
+                [class.invalid]="form.get('unitPrice')?.touched && form.get('unitPrice')?.invalid"
               />
             </td>
             <td class="p-2">
               <input
                 type="date"
                 class="w-full px-2 py-2 bg-white border rounded border-gray-300  focus:ring-2 focus:ring-primary/20 focus:border-primary outline-none text-sm"
-                [class.ring-red-300]="form.get('tps')?.touched && form.get('tps')?.invalid"
-                [class.ring-2]="form.get('tps')?.touched && form.get('tps')?.invalid"
+                [class.invalid]="form.get('tps')?.touched && form.get('tps')?.invalid"
                 formControlName="tps"
               />
             </td>

@@ -1,4 +1,4 @@
-import {Component, EventEmitter, OnInit, Output} from '@angular/core';
+import {Component, EventEmitter, Input, OnInit, Output} from '@angular/core';
 import {ButtonSmall} from '../../shared/button-small/button-small';
 import {RouterLink} from '@angular/router';
 import {UserStateService} from '../../core/user/user-state.service';
@@ -22,6 +22,8 @@ export class ClientMaster implements OnInit{
   selectedClientId: string | null = null;
   @Output() clientSelected = new EventEmitter<string>();
 
+  @Input() selectedClient!: string | null;
+
 
   constructor(public userState: UserStateService, private clientService: ClientService){
   }
@@ -30,16 +32,20 @@ export class ClientMaster implements OnInit{
     this._clients = this.clientService.getClientsList().pipe(
       tap(clients => {
         if (clients.length > 0 && !this.selectedClientId) {
-          this.selectedClientId = clients[0].id;
+          if(this.selectedClient){
+            this.selectedClientId = this.selectedClient;
+          }else {
+            this.selectedClientId = clients[0].id;
+          }
           this.clientSelected.emit(this.selectedClientId);
         }
       })
     );
   }
 
-  selectClient(client: ClientShortResp) {
-    this.selectedClientId = client.id;
-    this.clientSelected.emit(client.id);
+  selectClient(clientId: string) {
+    this.selectedClientId = clientId;
+    this.clientSelected.emit(clientId);
   }
 
 }

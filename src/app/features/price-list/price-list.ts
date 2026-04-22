@@ -1,9 +1,9 @@
-import {Component} from '@angular/core';
+import {Component, OnInit} from '@angular/core';
 import {ClientMaster} from '../../layout/client-master/client-master';
 import {ButtonSmall} from '../../shared/button-small/button-small';
 import {UserStateService} from '../../core/user/user-state.service';
 import {AsyncPipe, CurrencyPipe, DatePipe, LowerCasePipe, NgClass} from '@angular/common';
-import {BehaviorSubject, catchError, map, Observable, of, take, tap} from 'rxjs';
+import {BehaviorSubject, map, Observable, tap} from 'rxjs';
 import {RouterLink} from '@angular/router';
 import {PriceListService} from '../../core/pricelist/PriceListService';
 import {PriceListShort} from '../../core/pricelist/models/price-list-short';
@@ -27,7 +27,7 @@ import {CATEGORIES} from '../../core/pricelist/models/category.model';
   ],
   templateUrl: './price-list.html',
 })
-export class PriceList{
+export class PriceList implements OnInit{
   private productSubject = new BehaviorSubject<ListItem[]>([]);
   private productsBackup: ListItem[] = [];
 
@@ -37,6 +37,8 @@ export class PriceList{
   selectedPriceList!: Observable<PriceListShort[]>;
   selectedProducts: Observable<ListItem[]> = this.productSubject.asObservable();
   newItemForm!: FormGroup;
+
+  preselectedClientId: string | null = null;
 
   constructor(public userState: UserStateService,private priceService: PriceListService, private fb: FormBuilder) {
     this.newItemForm = this.fb.group({
@@ -48,6 +50,11 @@ export class PriceList{
       }
     )
   }
+
+  ngOnInit(): void {
+    this.preselectedClientId = history.state.preselectedClientId;
+  }
+
 
 
   onEditList(){
@@ -113,18 +120,20 @@ export class PriceList{
       }
     )
   }
-
+  // TODO dodanie pól tps i package
   onAddItem(){
     if(this.newItemForm.valid){
-      const { name, unitPrice, unit,category, internalName } = this.newItemForm.value;
+      const { name, unitPrice, unit, internalName } = this.newItemForm.value;
 
       const listItem: ListItem = {
         id: null,
         internal: internalName,
         name: name,
         unitPrice: unitPrice,
-        category: category,
         unit: unit,
+        tps: "",
+        pack: "",
+        producer:"test"
       }
       const currentList = this.productSubject.getValue();
       this.productSubject.next([listItem ,...currentList]);

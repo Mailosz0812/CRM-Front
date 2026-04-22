@@ -10,6 +10,7 @@ import {PRODUCT_UNITS} from '../../../core/pricelist/models/unit.model';
 import {SaleCreationReq, SaleItem, SaleScratchItem} from '../../../core/sale/models/SaleCreationReq';
 import {SaleItemView} from '../../../core/sale/models/SaleItemView';
 import {SaleService} from '../../../core/sale/SaleService';
+import {CartEntry, PriceListModal} from '../price-list-modal/price-list-modal';
 
 @Component({
   selector: 'app-sales-creation-form',
@@ -18,7 +19,8 @@ import {SaleService} from '../../../core/sale/SaleService';
     AsyncPipe,
     CurrencyPipe,
     LowerCasePipe,
-    DecimalPipe
+    DecimalPipe,
+    PriceListModal
   ],
   templateUrl: './sales-creation-form.html',
 })
@@ -33,10 +35,9 @@ export class SalesCreationForm implements OnInit{
   selectedProduct: ListItem | null = null;
   grossPrice: number = 0.0;
 
-  addMode: 'list' | 'scratch' = 'list';
+  addMode: 'modal' | 'scratch' = 'scratch';
 
-  saleScratchItems: SaleScratchItem[] = [];
-  saleItems: SaleItem[] = [];
+  chosenItems: CartEntry[] = [];
   sum: number = 0;
 
   saleViewItems: SaleItemView[] = [];
@@ -112,13 +113,6 @@ export class SalesCreationForm implements OnInit{
 
     const parsedAmount = Number(amount);
     const parsedPrice = Number(unitPrice);
-    const item = {
-      name: name,
-      internal: internal,
-      unit: unit,
-      unitPrice: unitPrice,
-      amount: amount
-    };
 
     const sum1 = parsedAmount * parsedPrice;
     const itemView: SaleItemView = {
@@ -132,44 +126,39 @@ export class SalesCreationForm implements OnInit{
     };
 
     this.saleViewItems.push(itemView);
-    this.saleScratchItems.push(item);
     this.sum+=sum1;
     this.newScratchItem.reset();
   }
+  onChooseProducts(items: CartEntry[]){
+    this.chosenItems = items;
+    const scratchItems = this.getScratchItems();
+    this.saleViewItems = []
+    let itemsSum = 0;
 
-  onAddFromList(){
-    if(this.newItemForm.invalid){
-      return;
-    }
-    const {productId, amount} = this.newItemForm.value;
-    this.saleItems.push({
-      prodId: productId,
-      amount: amount
+    const modalItems: SaleItemView[] = items.map(entry => {
+      const sum1 = +entry.saleItem.amount * +entry.saleItem.unitPrice;
+      itemsSum+=sum1
+      return ({
+          prodId: entry.saleItem.prodId,
+          name: entry.item.name,
+          internal: entry.item.internal,
+          unit: entry.item.unit,
+          unitPrice: entry.saleItem.unitPrice,
+          amount: entry.saleItem.amount,
+          sum: sum1
+        });
     });
-    if(this.selectedProduct) {
-      this.saleViewItems.push({
-        prodId: productId,
-        name: this.selectedProduct.name,
-        internal: this.selectedProduct.internal,
-        unit: this.selectedProduct.unit,
-        unitPrice: this.selectedProduct.unitPrice,
-        amount: amount,
-        sum: this.grossPrice
-      });
-    }
-    this.sum+=this.grossPrice;
-    this.newItemForm.reset();
+    this.sum = itemsSum;
+    this.saleViewItems = [...modalItems, ... scratchItems];
   }
 
-  onClearListItem(){
-    this.newItemForm.get('productId')?.setValue(null);
-    this.grossPrice = 0.0;
-  }
+
+
   onDeleteItem(item: SaleItemView,idx: number){
-    if(item.prodId){
-      this.saleItems = this.saleItems.filter(p => p.prodId !== item.prodId);
-    }else{
-      this.saleScratchItems = this.saleScratchItems.filter(p => p.name !== item.name)
+    if (item.prodId) {
+      this.chosenItems = this.chosenItems.filter(
+        (entry) => entry.saleItem.prodId !== item.prodId
+      );
     }
     this.sum-=item.sum;
     this.saleViewItems.splice(idx,1);
@@ -188,23 +177,35 @@ export class SalesCreationForm implements OnInit{
     }
     const {saleName, clientId, note, warehouseNote } = this.infoForm.value;
 
+    const saleItems: SaleItem[] = this.saleViewItems
+      .filter((item) => !!item.prodId)
+      .map(item => ({
+        prodId: item.prodId!,
+        amount: item.amount,
+        unitPrice: item.unitPrice
+      }));
+    const customItems: SaleScratchItem[] = this.getScratchItems().map(item => ({
+      name: item.name,
+      internal: item.internal,
+      unitPrice: item.unitPrice,
+      unit: item.unit,
+      amount: item.amount
+    }));
+
     const saleCreationReq: SaleCreationReq = {
       saleName: saleName,
       clientId: clientId,
       saleData: note,
       warehouseNote: warehouseNote,
-      saleItems: this.saleItems,
-      customItems: this.saleScratchItems,
+      saleItems: saleItems,
+      customItems: customItems,
     }
-    console.log(saleCreationReq);
     this.saleService.createSale(saleCreationReq).subscribe({
       next: (resp) => {
         this.newItemForm.reset();
         this.newScratchItem.reset();
         this.infoForm.reset();
         this.saleViewItems = [];
-        this.saleItems = [];
-        this.saleScratchItems = [];
         this.showNotification('success', 'Zamówienie zostało utworzone pomyślnie!');
       },
       error: (err: Error) => {
@@ -218,6 +219,9 @@ export class SalesCreationForm implements OnInit{
     setTimeout(() => {
       this.notification.show = false;
     }, 4000);
+  }
+  private getScratchItems() {
+    return this.saleViewItems.filter((item) => !item.prodId);
   }
 }
 

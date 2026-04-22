@@ -181,7 +181,7 @@ export class SalesmanSales implements OnInit {
 
       const mappedSaleItems: SaleItem[] = currentItems
         .filter(i => i.prodId !== null)
-        .map(i => ({ prodId: i.prodId!, amount: i.amount }));
+        .map(i => ({ prodId: i.prodId!, amount: i.amount ,unitPrice: '0'}));
 
       const mappedCustomItems: SaleScratchItem[] = currentItems
         .filter(i => i.prodId === null)

@@ -1,6 +1,6 @@
 <div class="h-full w-full flex flex-col">
   <div class="flex flex-1 flex-col xl:flex-row gap-4 xl:min-h-0">
-    <app-client-master (clientSelected)="selectClient($event)"/>
+    <app-client-master (clientSelected)="selectClient($event)" [selectedClient]="preselectedClientId"/>
     <div class="w-full flex flex-col xl:grid xl:grid-cols-2 gap-4 flex-1 xl:min-h-0">
       <div class="border border-gray-200 rounded-xl shadow-sm flex flex-col bg-white xl:min-h-0">
 
@@ -118,9 +118,6 @@
 
                   <td class="py-3 text-right px-4 text-gray-800 font-semibold">
                     {{ item.unit | lowercase}}
-                  </td>
-                  <td class="py-3 px-4 text-center text-gray-800 font-semibold">
-                    {{ item.category | lowercase}}
                   </td>
                 </tr>
               } @empty {

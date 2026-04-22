@@ -25,7 +25,6 @@ export class PriceListCreation{
   private clientId!: string | null;
   private basePath!: string | null;
   availableUnits = PRODUCT_UNITS;
-  availableCategories = CATEGORIES;
   form: FormGroup;
   newItemForm: FormGroup;
 
@@ -52,7 +51,6 @@ export class PriceListCreation{
       internal: ['',Validators.required],
       unitPrice: [null, [Validators.required, Validators.min(0)]],
       unit: [null, [Validators.required]],
-      prodCategory: [null,[Validators.required]]
     });
   }
 
@@ -69,7 +67,8 @@ export class PriceListCreation{
         internalName: [internal, Validators.required],
         unitPrice: [unitPrice, Validators.required],
         unit: [unit,Validators.required],
-        prodCategory: [prodCategory,Validators.required]
+        tps: ["",Validators.required],
+        package: [""]
       });
 
       this.items.push(itemGroup);
@@ -90,7 +89,6 @@ export class PriceListCreation{
       ...this.form.getRawValue(),
       clientId: this.clientId
     }
-    console.log(priceList);
     this.priceService.createPriceList(priceList).subscribe({
       next: (resp)=> {
         this.form.reset();
