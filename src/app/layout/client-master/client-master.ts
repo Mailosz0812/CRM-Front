@@ -2,7 +2,7 @@ import {Component, EventEmitter, Input, OnInit, Output} from '@angular/core';
 import {ButtonSmall} from '../../shared/button-small/button-small';
 import {RouterLink} from '@angular/router';
 import {UserStateService} from '../../core/user/user-state.service';
-import {Observable, tap} from 'rxjs';
+import {BehaviorSubject, combineLatest, map, Observable, tap} from 'rxjs';
 import {AsyncPipe} from '@angular/common';
 import {ClientService} from '../../core/client/client.service';
 import {ClientShortResp} from '../../core/client/models/client-short-resp';
@@ -17,13 +17,15 @@ import {ClientShortResp} from '../../core/client/models/client-short-resp';
   templateUrl: './client-master.html',
 })
 export class ClientMaster implements OnInit{
+  @Output() clientSelected = new EventEmitter<string>();
+  @Input() selectedClient!: string | null;
+
   isSidebarOpen = false;
   _clients!: Observable<ClientShortResp[]>
   selectedClientId: string | null = null;
-  @Output() clientSelected = new EventEmitter<string>();
 
-  @Input() selectedClient!: string | null;
-
+  searchTerm$ = new BehaviorSubject<string>('');
+  filteredClients!: Observable<ClientShortResp[]>;
 
   constructor(public userState: UserStateService, private clientService: ClientService){
   }
@@ -41,11 +43,26 @@ export class ClientMaster implements OnInit{
         }
       })
     );
+    this.filteredClients = combineLatest([this._clients, this.searchTerm$])
+      .pipe(
+        map(([clients, term]) => {
+          let list: ClientShortResp[] = clients;
+          if(term){
+            list = clients.filter(c => c.name.includes(term))
+          }
+          return list;
+        })
+      );
   }
 
   selectClient(clientId: string) {
     this.selectedClientId = clientId;
     this.clientSelected.emit(clientId);
+  }
+
+  onTerm(event: Event){
+    let term = (event.target as HTMLSelectElement).value;
+    this.searchTerm$.next(term);
   }
 
 }
