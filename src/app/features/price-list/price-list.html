@@ -1,8 +1,8 @@
 <div class="h-full w-full flex flex-col">
   <div class="flex flex-1 flex-col xl:flex-row gap-4 xl:min-h-0">
     <app-client-master (clientSelected)="selectClient($event)" [selectedClient]="preselectedClientId"/>
-    <div class="w-full flex flex-col xl:grid xl:grid-cols-2 gap-4 flex-1 xl:min-h-0">
-      <div class="border border-gray-200 rounded-xl shadow-sm flex flex-col bg-white xl:min-h-0">
+    <div class="w-full flex flex-col xl:grid xl:grid-cols-3 gap-4 flex-1 xl:min-h-0">
+      <div class="border border-gray-200 rounded-xl shadow-sm flex flex-col bg-white xl:min-h-0 xl:col-span-2">
 
 
         <div class="p-4 border-b border-gray-100 flex flex-col gap-2 sm:flex-row sm:items-center sm:justify-between shrink-0">
@@ -11,13 +11,16 @@
             <app-button-small class="w-full sm:w-auto" [isFullWidth] = "true" [buttonText]="'Edytuj cennik'" [hidden]="editPriceListMode" (clickEvent) = "onEditList()"></app-button-small>
             <app-button-small class="w-full sm:w-auto" [isFullWidth] = "true" [buttonText]="'Zapisz'" [hidden]="!editPriceListMode" (clickEvent) = "onSaveList()"></app-button-small>
             <app-button-small class="w-full sm:w-auto" [isFullWidth] = "true" [buttonText]="'Powrót'" [hidden]="!editPriceListMode" (clickEvent) = "onCancelList()"></app-button-small>
-            <button [hidden]="editPriceListMode" class="px-4 py-2 text-sm font-medium text-gray-700 bg-white border border-gray-200 rounded-lg hover:bg-gray-50 transition-colors flex items-center justify-center gap-2 shadow-sm">
+            <button
+              [hidden]="editPriceListMode"
+              (click)="onPrintPriceList()"
+              class="px-4 py-2 text-sm font-medium text-gray-700 bg-white border border-gray-200 rounded-lg hover:bg-gray-50 transition-colors flex items-center justify-center gap-2 shadow-sm">
               <svg class="w-4 h-4 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 17h2a2 2 0 002-2v-4a2 2 0 00-2-2H5a2 2 0 00-2 2v4a2 2 0 002 2h2m2 4h6a2 2 0 002-2v-4a2 2 0 00-2-2H9a2 2 0 00-2 2v4a2 2 0 002 2zm8-12V5a2 2 0 00-2-2H9a2 2 0 00-2 2v4h10z"></path></svg>
               Wydruk
             </button>
-            <button (click)="onAddItem()" [hidden]="!editPriceListMode" class="px-3 py-1.5 font-medium text-primary bg-primary/10 hover:bg-primary/20 rounded-lg transition-colors flex items-center justify-center gap-1.5">
+            <button (click)="onOpenModal()" [hidden]="!editPriceListMode" class="px-3 py-1.5 font-medium text-primary bg-primary/10 hover:bg-primary/20 rounded-lg transition-colors flex items-center justify-center gap-1.5">
               <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"></path></svg>
-              Dodaj pozycję
+              Z cennika bazowego
             </button>
           </div>
         </div>
@@ -31,70 +34,90 @@
               <th class="py-3 px-4 font-bold border-b border-gray-200">Produkt</th>
               <th class="py-3 px-4 text-right font-bold border-b border-gray-200">Cena jednostkowa</th>
               <th class="py-3 px-4 font-bold text-right bg-green-50/50 border-b border-gray-200">Jednostka</th>
-              <th class="py-3 px-4 font-bold text-right bg-green-50/50 border-b border-gray-200">Kategoria</th>
+              <th class="py-3 px-4 font-bold text-right bg-green-50/50 border-b border-gray-200">Tps</th>
+              <th class="py-3 px-4 font-bold text-right bg-green-50/50 border-b border-gray-200">Opakowanie</th>
+              <th class="py-3 px-4 font-bold text-right bg-green-50/50 border-b border-gray-200">Producent</th>
             </tr>
             </thead>
 
             <tbody class="divide-y divide-gray-100 bg-white align-top">
+            @if(editPriceListMode){
+              <tr class="bg-green-50/30 border-l-4 border-l-green-500 transition-all align-middle" [formGroup]="newItemForm" (keydown.enter)="onAddItem()">
 
-              @if (editPriceListMode) {
-                <tr class="bg-green-50/40 border-l-4 border-l-green-500 shadow-sm transition-all" [formGroup]="newItemForm">
+                <td class="py-2 px-2 border-b border-gray-200">
+                  <div class="flex items-center gap-2">
+                    <button
+                      type="button"
+                      (click)="onAddItem()"
+                      [disabled]="newItemForm.invalid"
+                      class="shrink-0 w-9 h-9 bg-green-500 text-white rounded-lg hover:bg-green-600 disabled:opacity-30 disabled:grayscale transition-all flex items-center justify-center shadow-sm">
+                      <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M12 4v16m8-8H4"></path></svg>
+                    </button>
 
-                  <td class="py-2 px-4 flex flex-col gap-2">
-                    <input
-                      type="text"
-                      placeholder="Nazwa produktu..."
-                      formControlName="name"
-                      class="w-full text-sm px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-green-500 focus:border-green-500 bg-white placeholder-gray-400 transition-shadow"
-                    />
-                    <input
-                      type="text"
-                      placeholder="SKU-@123"
-                      formControlName="internalName"
-                      class="w-full text-sm px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-green-500 focus:border-green-500 bg-white placeholder-gray-400 transition-shadow"
-                    />
-                  </td>
-
-                  <td class="py-2 px-4">
-                    <div class="relative">
-                      <input
-                        type="number"
-                        placeholder="0.00"
-                        formControlName="unitPrice"
-                        class="w-full text-sm px-3 py-2 pr-8 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-green-500 focus:border-green-500 bg-white text-right placeholder-gray-400 transition-shadow"
-                      >
-                      <span class="absolute right-3 top-2.5 text-sm text-gray-500 pointer-events-none">zł</span>
+                    <div class="flex flex-col gap-1.5 flex-1">
+                      <input type="text" placeholder="Nazwa..." formControlName="name"
+                             class="w-full text-sm px-2 py-1.5 border border-gray-300 rounded rounded-md focus:ring-1 focus:ring-green-500 outline-none">
+                      <input type="text" placeholder="Wewn..." formControlName="internalName"
+                             class="w-full text-sm px-2 py-1.5 border border-gray-300 rounded rounded-md focus:ring-1 focus:ring-green-500 outline-none">
                     </div>
-                  </td>
+                  </div>
+                </td>
 
-                  <td class="py-2 px-4">
-                    <select
-                      formControlName="unit"
-                      class="w-full text-sm px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-green-500 focus:border-green-500 bg-white text-gray-800 cursor-pointer transition-shadow"
-                    >
-                      <option [ngValue]="null" disabled selected>Wybierz...</option>
-                      @for (unit of availableUnits; track unit) {
-                        <option [value]="unit">{{ unit | lowercase }}</option>
+                <td class="py-2 px-2 text-right border-b border-gray-200">
+                  <div class="inline-flex items-center border border-gray-300 rounded rounded-md bg-white focus-within:ring-1 focus-within:ring-green-500">
+                    <input type="number" step="0.01" formControlName="unitPrice"
+                           class="w-20 text-sm py-1.5 px-2 text-right outline-none border-none font-semibold">
+                    <span class="text-md text-gray-400 pr-2">zł</span>
+                  </div>
+                </td>
+
+                <td class="py-2 px-2 border-b border-gray-200">
+                  <select formControlName="unit"
+                          class="w-full text-sm px-2 py-1.5 border border-gray-300 rounded rounded-md outline-none focus:ring-1 focus:ring-green-500 bg-white">
+                    <option [ngValue]="null">Jm.</option>
+                    @for (unit of availableUnits; track unit) {
+                      <option [value]="unit">{{ unit | lowercase }}</option>
+                    }
+                  </select>
+                </td>
+
+                <td class="py-2 px-2 border-b border-gray-200">
+                  <input type="date" formControlName="tps"
+                         class="w-full text-sm px-2 py-1.5 border border-gray-300 rounded rounded-md outline-none focus:ring-1 focus:ring-green-500 bg-white">
+                </td>
+
+                <td class="py-2 px-2 border-b border-gray-200">
+                  <div class="flex flex-col gap-1.5">
+                    <input type="text" placeholder="Waga/Opak..." formControlName="pack"
+                           class="w-full text-sm px-2 py-1.5 border border-gray-300 rounded rounded-md outline-none focus:ring-1 focus:ring-green-500">
+                    <select formControlName="category"
+                            class="w-full text-sm px-2 py-1.5 border border-gray-200 rounded rounded-md text-gray-500 outline-none bg-white">
+                      <option [ngValue]="null" disabled>Kategoria...</option>
+                      @for (category of categories.values(); track category.id) {
+                        <option [value]="category.id">{{ category.name }}</option>
                       }
                     </select>
-                  </td>
+                  </div>
+                </td>
 
-                  <td class="py-2 pl-4 pr-2">
-                    <select
-                      formControlName="category"
-                      class="w-full text-sm px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-green-500 focus:border-green-500 bg-white text-gray-800 cursor-pointer transition-shadow"
-                    >
-                      <option [ngValue]="null" disabled selected>Wybierz...</option>
-                      @for (category of availableCategories; track category) {
-                        <option [value]="category">{{ category | lowercase }}</option>
-                      }
-                    </select>
-                  </td>
+                <td class="py-2 px-2 border-b border-gray-200">
+                  <input
+                    type="text"
+                    list="producersList"
+                    placeholder="Producent..."
+                    formControlName="producer"
+                    class="w-full text-sm px-2 py-1.5 border border-gray-300 rounded rounded-md outline-none focus:ring-1 focus:ring-green-500 bg-white"
+                  />
+                  <datalist id="producersList">
+                    @for (p of producers$ | async; track p) {
+                      <option [value]="p"></option>
+                    }
+                  </datalist>
+                </td>
+              </tr>
+            }
 
-                </tr>
-              }
-
-              @for (item of (selectedProducts | async); track item.id || $index) {
+              @for (item of (combinedProducts$ | async); track item.id || $index) {
                 <tr class="hover:bg-gray-50 transition-colors group">
                   <td class="py-3">
                     <div class="flex items-center">
@@ -119,10 +142,19 @@
                   <td class="py-3 text-right px-4 text-gray-800 font-semibold">
                     {{ item.unit | lowercase}}
                   </td>
+                  <td class="py-3 text-right px-4 text-gray-800 font-semibold">
+                    {{ item.tps | date: 'dd.MM.yyyy'}}
+                  </td>
+                  <td class="py-3 text-right px-4 text-gray-800 font-semibold">
+                    {{ item.pack | lowercase}}
+                  </td>
+                  <td class="py-3 text-right px-4 text-gray-800 font-semibold">
+                    {{ item.producer }}
+                  </td>
                 </tr>
               } @empty {
                 <tr>
-                  <td colspan="4" class="py-8 text-center text-gray-500 font-medium">
+                  <td colspan="6" class="py-8 text-center text-gray-500 font-medium">
                     Ten cennik nie ma jeszcze przypisanych żadnych produktów.
                   </td>
                 </tr>
@@ -207,3 +239,18 @@
     </div>
   </div>
 </div>
+@if(addBaseMode){
+  <app-base-pricelist-modal
+    [basePriceList]="basePriceList"
+    [preselectedItems]="stagedBaseItems.value"
+    (closeEvent)="onCloseModal($event)"
+    (saveEvent)="onSaveModalItems($event)"
+  />
+}
+@if(notificationState.show){
+  <app-notification
+    [message]="notificationState.message"
+    [type]="notificationState.type"
+    (closeEvent)="notificationState.show = false"
+  />
+}

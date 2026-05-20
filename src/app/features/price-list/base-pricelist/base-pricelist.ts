@@ -5,13 +5,18 @@ import {PRODUCT_UNITS} from '../../../core/pricelist/models/unit.model';
 import {FormBuilder, FormGroup, ReactiveFormsModule, Validators} from '@angular/forms';
 import {ListItem} from '../../../core/pricelist/models/price-list-response';
 import {FormatEnumPipe} from '../../../shared/format-enum-pipe';
-import {BasePriceList, BasePriceListResponse} from '../../../core/pricelist/models/BasePrice-list';
+import {BasePriceList, BasePriceListResponse, ProductOperation} from '../../../core/pricelist/models/BasePrice-list';
 import {PriceListService} from '../../../core/pricelist/PriceListService';
-import {BehaviorSubject, combineLatest, EMPTY, map, Observable} from 'rxjs';
+import {BehaviorSubject, combineLatest, map, Observable} from 'rxjs';
 import {Notification} from '../../../shared/notification/notification';
 import {NotificationState} from '../../../shared/notification/NotificationState';
 import {ProductService} from '../../../core/pricelist/ProductService';
-
+import {ProductsFilter} from '../../../shared/products-filter/products-filter';
+import {Category} from '../../../core/pricelist/models/category';
+export interface ListItemOperation {
+  isDeleted: boolean,
+  item: ListItem
+}
 @Component({
   selector: 'app-base-pricelist',
   imports: [
@@ -22,68 +27,57 @@ import {ProductService} from '../../../core/pricelist/ProductService';
     ReactiveFormsModule,
     FormatEnumPipe,
     AsyncPipe,
-    Notification
+    Notification,
+    ProductsFilter
   ],
   templateUrl: './base-pricelist.html',
 })
+
 export class BasePricelist implements OnInit{
 
   private apiItems = new BehaviorSubject<BasePriceListResponse>({
-    productList: []
+    productList: [],
+    id: ''
   });
-  private localChanges = new BehaviorSubject<Map<string,ListItem>>(new Map<string, ListItem>())
+  private localChanges = new BehaviorSubject<Map<string, ListItemOperation>>(new Map());
   notificationState: NotificationState = {
     show: false,
     message: '',
     type: 'success'
   };
-
-  private searchTerm$ = new BehaviorSubject<string>('');
-  private selectedProducer$ = new BehaviorSubject<string | null>(null);
-  private selectedDate$ = new BehaviorSubject<string | null>(null);
+  private productsView = new BehaviorSubject<ListItem[]>([]);
 
 
   products$: Observable<ListItem[]> = combineLatest([
     this.apiItems,
     this.localChanges,
-    this.searchTerm$,
-    this.selectedProducer$,
-    this.selectedDate$
   ]).pipe(
-    map(([base, changes, term, producer, date]) => {
-      let combined = base.productList.map(item =>
-        changes.has(item.id!) ? { ...item, ...changes.get(item.id!) } : item
-      );
-      const newItems = Array.from(changes.values()).filter(c => c.id?.toString().startsWith('new-'));
-      let list = [...newItems, ...combined];
-
-      if (term) {
-        const lowTerm = term.toLowerCase();
-        list = list.filter(i =>
-          i.name.toLowerCase().includes(lowTerm) ||
-          i.internal?.toLowerCase().includes(lowTerm)
+    map(([base, changes]) => {
+      let combined = base.productList
+        .filter(item => !changes.get(item.id!)?.isDeleted)
+        .map(item =>
+          changes.has(item.id!) ? changes.get(item.id!)!.item : item
         );
-      }
 
-      if (producer) {
-        list = list.filter(i => i.producer === producer);
-      }
+      const newItems = Array.from(changes.values())
+        .filter(op => op.item.id?.startsWith('new-') && !op.isDeleted)
+        .map(op => op.item);
 
-      if (date) {
-        list = list.filter(i => i.tps?.startsWith(date));
-      }
-
-      return list;
+      return [...newItems, ...combined];
     })
   );
   producers$ = new BehaviorSubject<Set<string>>(new Set());
+  categories = new Map<string, Category>();
+
   form!: FormGroup;
   onEditMode = false;
 
   availableUnits = PRODUCT_UNITS;
 
+
   constructor(private fb: FormBuilder, private priceService: PriceListService,
-              private cdr: ChangeDetectorRef, private productService: ProductService) {}
+              private cdr: ChangeDetectorRef, private productService: ProductService,
+              private priceListService: PriceListService) {}
 
   ngOnInit(): void {
     this.form = this.fb.group({
@@ -94,11 +88,13 @@ export class BasePricelist implements OnInit{
       unit: [null,Validators.required],
       tps: ['',Validators.required],
       pack: [''],
-      producer: [null,Validators.required]
+      producer: [null,Validators.required],
+      category: [null,Validators.required]
     });
 
     this.priceService.getBasePriceList().subscribe({
       next: (resp) =>{
+        console.log(resp);
         this.apiItems.next(resp)
       },error: (err) =>{
         this.triggerNotification('error',
@@ -110,114 +106,132 @@ export class BasePricelist implements OnInit{
         this.producers$.next(new Set([...resp]));
       }
     })
-
-  }
-
-  onAddItem(){
-    if(this.form.invalid){
-      return;
-    }
-    const value = this.form.value;
-    const formatDate = new Date(value.tps).toISOString();
-    const tempId = 'new-' + new Date();
-    const item: ListItem = {
-      ... value,
-      tps: formatDate,
-      id: tempId
-    }
-    if(!this.producers$.value.has(item.producer)){
-      const currMap = this.producers$.value
-      currMap.add(item.producer);
-      this.producers$.next(new Set(currMap));
-    }
-
-    const currItems = this.localChanges.value;
-    currItems.set(tempId,item)
-    this.localChanges.next(new Map(currItems));
-    this.form.reset();
-    this.cdr.detectChanges();
-  }
-
-  onSaveItems(){
-    const products = this.localChanges.value;
-    if(products.size < 1){
-      return;
-    }
-    const productList = Array.from(products.values())
-      .map(item => {
-        if(item.id?.startsWith('new-')){
-          return {
-            ...item,
-            id: null,
-          }
-        }
-        return item;
-      });
-    const req: BasePriceList = {
-      productList: productList
-    }
-    this.priceService.patchBasePriceList(req).subscribe({
-      next: (resp) =>{
-        this.apiItems.next(resp);
-        this.localChanges.next(new Map());
-        this.cdr.detectChanges();
-        this.triggerNotification('success','Cennik zapisany pomyślnie')
+    this.productService.getCategories().subscribe({
+      next: (resp) => {
+        resp.forEach(item => {
+          this.categories.set(item.name,item);
+        })
       },
       error: (err) => {
-        this.triggerNotification('error',err.message);
+        this.triggerNotification('error','Wystąpił błąd podczas ładowania kategorii')
       }
-    });
+      }
+    );
   }
 
+  onAddItem() {
+    if (this.form.invalid) return;
+
+    const value = this.form.value;
+    const tempId = 'new-' + new Date().getTime();
+    const item: ListItem = {
+      ...value,
+      tps: new Date(value.tps).toISOString(),
+      id: tempId,
+    };
+
+    const currChanges = this.localChanges.value;
+    currChanges.set(tempId, { isDeleted: false, item: item });
+    this.localChanges.next(new Map(currChanges));
+
+    this.form.reset();
+  }
+
+  onDeleteItem(item: ListItem) {
+    const currChanges = this.localChanges.getValue();
+
+    if (item.id?.toString().startsWith('new-')) {
+      currChanges.delete(item.id!);
+    } else {
+      currChanges.set(item.id!, { item, isDeleted: true });
+    }
+
+    this.localChanges.next(new Map(currChanges));
+  }
+
+  onSaveItems() {
+    const changes = this.localChanges.value;
+    if (changes.size < 1) return;
+
+    const productList: ProductOperation[] = Array.from(changes.values())
+      .map(op => {
+        const item = op.item;
+        const categoryId = this.categories.has(item.category)
+          ? this.categories.get(item.category)!.id
+          : item.category;
+
+        return {
+          delete: op.isDeleted,
+          prodReq: {
+            ...item,
+            id: item.id?.startsWith('new-') ? null : item.id,
+            category: categoryId
+          }
+        };
+      });
+
+    const req: BasePriceList = { productList };
+
+    this.priceService.patchBasePriceList(req).subscribe({
+      next: (resp) => {
+        this.apiItems.next(resp);
+        this.localChanges.next(new Map());
+        this.triggerNotification('success', 'Cennik zapisany pomyślnie');
+      },
+      error: (err) => this.triggerNotification('error', err.message)
+    });
+  }
   onEditItem(item: ListItem){
     const formattedDate = item.tps ? new Date(item.tps).toISOString().split('T')[0] : '';
     this.onEditMode = true;
     this.form.patchValue({
       ...item,
-      tps: formattedDate
+      tps: formattedDate,
     });
 
   }
-
-  onSaveEditedItem(){
-    if(this.form.invalid){
-      return;
-    }
+  products(){
+    return this.productsView.asObservable();
+  }
+  onFiltered(products: ListItem[]){
+    this.productsView.next(products);
+  }
+  onSaveEditedItem() {
+    if (this.form.invalid) return;
 
     const value = this.form.value;
-    const tps = new Date(value.tps).toISOString();
-
     const item: ListItem = {
       ...value,
-      tps: tps
+      tps: new Date(value.tps).toISOString()
     };
-    if(!this.producers$.value.has(item.producer)){
-      const currMap = this.producers$.value
-      currMap.add(item.producer);
-      this.producers$.next(new Set(currMap));
-    }
 
     const currMap = this.localChanges.getValue();
-    currMap
-      .set(value.id,item);
-    this.localChanges.next(currMap);
+    currMap.set(value.id, { isDeleted: false, item: item });
+    this.localChanges.next(new Map(currMap));
 
     this.form.reset();
     this.onEditMode = false;
   }
-  onSearchChange(event: Event) {
-    const value = (event.target as HTMLInputElement).value;
-    this.searchTerm$.next(value);
-  }
+  onPrintPriceList(){
+    const id = this.apiItems.value.id;
+    if(id == ''){
+      return;
+    }
+    this.priceListService.getPriceListPrint(id).subscribe({
+      next: (resp) => {
+        const pdfBlob = new Blob([resp], { type: 'application/pdf' });
+        const fileUrl = URL.createObjectURL(pdfBlob);
 
-  onProducerChange(event: Event) {
-    const value = (event.target as HTMLSelectElement).value;
-    this.selectedProducer$.next(value === 'null' ? null : value);
-  }
-
-  onDateChange(event: Event) {
-    const value = (event.target as HTMLInputElement).value;
-    this.selectedDate$.next(value || null);
+        window.open(fileUrl,'_blank');
+        setTimeout(() => {
+          URL.revokeObjectURL(fileUrl);
+        }, 1000);
+      },
+      error: (err) => {
+        console.log(err);
+        this.triggerNotification('error','Wystąpił błąd podczas generowania wydruku');
+      }
+    });
   }
 
   triggerNotification(type: 'success' | 'error', message: string) {
@@ -233,4 +247,5 @@ export class BasePricelist implements OnInit{
     }, 5000);
   }
 
+  protected readonly Array = Array;
 }

@@ -1,9 +1,15 @@
 import {ListItem} from './price-list-response';
 
 export interface BasePriceList {
-  productList: ListItem[]
+  productList: ProductOperation[];
+}
+
+export interface ProductOperation {
+  delete: boolean;
+  prodReq: ListItem;
 }
 
 export interface BasePriceListResponse{
-  productList: ListItem[]
+  id: string;
+  productList: ListItem[];
 }

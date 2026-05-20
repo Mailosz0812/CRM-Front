@@ -1,5 +1,4 @@
 import {ProductUnit} from './unit.model';
-import {Category} from './category.model';
 
 export interface PriceListResponse{
   id: string,
@@ -8,6 +7,10 @@ export interface PriceListResponse{
   productsList: ListItem[]
 }
 
+export interface ShortPriceList{
+  id: string,
+  items: ListItem[]
+}
 export interface ListItem{
   id: string | null,
   name: string,
@@ -16,5 +19,6 @@ export interface ListItem{
   unit: ProductUnit,
   producer: string
   tps: string,
-  pack: string
+  pack: string,
+  category: string
 }
