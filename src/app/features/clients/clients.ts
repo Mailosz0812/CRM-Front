@@ -26,7 +26,7 @@ export class Clients implements OnInit{
   selectedId$ = new BehaviorSubject<string | null>(null);
   _clientState!: Observable<ClientDashboardInfo>
 
-  private basePath!: string;
+  basePath!: string;
   constructor(private clientService: ClientService,private router: Router,
               private userState: UserStateService) {}
 
@@ -47,5 +47,8 @@ export class Clients implements OnInit{
   }
   onSaleDetails(saleId: string){
     this.router.navigate([this.basePath,'sales'],{ state: { preselectedSaleId: saleId } });
+  }
+  onPriceListDetails(clientId: string){
+    this.router.navigate([this.basePath,'prices','individual'],{ state: { preselectedClientId: clientId } });
   }
 }

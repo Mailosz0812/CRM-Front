@@ -1,20 +1,23 @@
-import { Component, OnInit, signal, inject } from '@angular/core';
+import {Component, OnInit, signal, inject, ChangeDetectorRef} from '@angular/core';
 import { MagazineService } from '../../core/magazine/MagazineService';
 import {AsyncPipe, DatePipe, LowerCasePipe} from '@angular/common';
 import { PackReq } from '../../core/magazine/models/PackReq';
 import { first } from 'rxjs/operators';
 import {FormsModule, ReactiveFormsModule} from '@angular/forms';
 import {catchError, EMPTY} from 'rxjs';
+import {Notification} from '../../shared/notification/notification';
 
 type NotificationState = { show: boolean; type: 'success' | 'error'; message: string };
 
 @Component({
   selector: 'app-sales',
-  imports: [AsyncPipe, LowerCasePipe, ReactiveFormsModule, FormsModule, DatePipe],
+  imports: [AsyncPipe, LowerCasePipe, ReactiveFormsModule, FormsModule, DatePipe, Notification],
   templateUrl: './sales.html',
 })
 export class Sales {
   private magazineService = inject(MagazineService);
+
+  constructor(private cdr: ChangeDetectorRef) {}
 
   targetDate:string = this.getTodayString();
   private previousDate = this.getTodayString();
@@ -23,11 +26,11 @@ export class Sales {
   expandedOrders = signal<Set<string>>(new Set());
   doneOrders = signal<Set<string>>(new Set());
 
-  notification = signal<NotificationState>({
+  notificationState: NotificationState = {
     show: false,
-    type: 'success',
-    message: ''
-  });
+    message: '',
+    type: 'success'
+  };
 
   toggleExpand(saleId: string): void {
     this.expandedOrders.update(current => {
@@ -53,22 +56,23 @@ export class Sales {
           });
         },
         error: (error: Error) => {
-          this.showNotification('error', 'Zatwierdzenie zamówienia nie powiodło się.');
+          this.triggerNotification('error', 'Zatwierdzenie zamówienia nie powiodło się.');
           console.error('Błąd oznaczania jako spakowane:', error);
         }
       });
   }
 
-  showNotification(type: 'success' | 'error', message: string) {
-    this.notification.set({ show: true, type, message });
+  triggerNotification(type: 'success' | 'error', message: string) {
+    this.notificationState = {
+      show: true,
+      type: type,
+      message: message
+    };
 
     setTimeout(() => {
-      this.notification.update(n => ({ ...n, show: false }));
-    }, 4000);
-  }
-
-  closeNotification(): void {
-    this.notification.update(n => ({ ...n, show: false }));
+      this.notificationState.show = false;
+      this.cdr.detectChanges();
+    }, 5000);
   }
 
   onDateChange(date: string){
@@ -77,7 +81,7 @@ export class Sales {
     }
     this.dailySales$ = this.magazineService.getDailySales(date).pipe(
       catchError(err => {
-        this.showNotification('error','Data zamówienia nie może być w przeszłości!');
+        this.triggerNotification('error','Data zamówienia nie może być w przeszłości!');
         return EMPTY;
       })
     );

@@ -58,8 +58,8 @@
         <div class="flex bg-gray-100 p-1 rounded-lg">
           <button
             type="button"
-            (click)="addMode = 'list'"
-            [class]="addMode === 'list' ? 'bg-white shadow-sm text-gray-900 font-bold' : 'text-gray-500 hover:text-gray-700 font-medium'"
+            (click)="addMode = 'modal'"
+            [class]="addMode === 'modal' ? 'bg-white shadow-sm text-gray-900 font-bold' : 'text-gray-500 hover:text-gray-700 font-medium'"
             class="px-3 py-1.5 text-sm rounded-md transition-all flex items-center gap-1.5"
           >
             <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 10h16M4 14h16M4 18h16"></path></svg>
@@ -88,66 +88,6 @@
             <th class="py-3 px-4 font-bold text-right">Suma brutto</th>
             <th class="py-3 px-4 font-bold text-center">Akcja</th>
           </tr>
-
-            @if (addMode === 'list') {
-              <tr class="bg-green-50/30 shadow-sm transition-all" [formGroup]="newItemForm">
-                <td class="py-2 px-4">
-                  <div class="relative">
-                    <select
-                      formControlName="productId"
-                      class="w-full text-sm py-2 pl-3 pr-8 border border-gray-300 rounded-lg bg-white focus:outline-none focus:ring-2 focus:ring-primary/50 focus:border-primary shadow-sm font-semibold text-gray-800 appearance-none cursor-pointer"
-                    >
-                      <option value="" disabled selected>Wybierz produkt z cennika...</option>
-                      @for(product of (availableProducts | async); track product.id){
-                        <option [value]="product.id">
-                          <span>{{product.name}}</span> -- <span>{{product.internal}}</span>
-                        </option>
-                      }
-                    </select>
-                    @if (newItemForm.get('productId')?.value) {
-                      <button
-                        type="button"
-                        (click)="onClearListItem()"
-                        class="absolute right-8 top-1.5 p-1 text-gray-400 hover:text-red-500 transition-colors rounded-full hover:bg-gray-100"
-                        title="Wyczyść wybór"
-                      >
-                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path></svg>
-                      </button>
-                    }
-                    <svg class="w-4 h-4 text-gray-400 absolute right-3 top-2.5 pointer-events-none" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path></svg>
-                  </div>
-                </td>
-                <td class="py-2 px-4 text-center w-32">
-                  <div class="flex items-center justify-center gap-1.5">
-                    <input formControlName="amount" type="number" placeholder="0.0" class="w-16 text-sm text-center py-2 border border-gray-300 rounded-lg bg-white focus:outline-none focus:ring-2 focus:ring-primary/50 focus:border-primary shadow-sm font-bold text-gray-900">
-                    @if(selectedProduct){
-                      <span class="text-xs text-gray-500 font-medium w-6 text-left">{{selectedProduct.unit | lowercase}}</span>
-                    }@else{
-                      <span class="text-xs text-gray-500 font-medium w-6 text-left">--</span>
-                    }
-                  </div>
-                </td>
-                <td class="normal-case text-base py-2 px-4 text-right text-gray-500 font-medium whitespace-nowrap">--</td>
-                <td class="normal-case text-base py-2 px-4 text-right text-gray-500 font-medium whitespace-nowrap">
-                  @if(selectedProduct){
-                    <span class="text-gray">
-                      {{ selectedProduct.unitPrice | number:'1.2-2' }} zł
-                    </span>
-                  }@else{
-                    <span class="text-gray-500 ">--</span>
-                  }
-                </td>
-                <td class="normal-case text-base py-2 px-4 text-right text-gray-500 font-medium whitespace-nowrap">-- zł</td>
-                <td class="normal-case text-base py-2 px-4 text-right text-gray-500 font-medium whitespace-nowrap">
-                  {{grossPrice | number: '1.2-2'}} zł
-                </td>
-                <td class="py-2 px-4 text-right">
-                  <button (click)="onAddFromList()" type="button" [disabled]="newItemForm.invalid" class="px-3 py-1.5 bg-primary text-white text-sm font-bold rounded-md hover:bg-primary-dark disabled:opacity-50 transition-colors">
-                    Dodaj
-                  </button>
-                </td>
-              </tr>
-            } @else {
               <tr class="bg-blue-50/20 shadow-sm transition-all" [formGroup]="newScratchItem">
                 <td class="py-2 px-4 flex flex-col gap-3">
                   <input
@@ -168,7 +108,7 @@
                     <input
                       type="number"
                       formControlName="amount"
-                      placeholder="0.0"
+                      placeholder="0.1"
                       min="0.1"
                       class="w-16 text-sm text-center py-2 border border-gray-300 rounded-lg bg-white focus:outline-none focus:ring-2 focus:ring-primary/50 focus:border-primary shadow-sm font-bold text-gray-800">
                     <select
@@ -206,7 +146,6 @@
                   </button>
                 </td>
               </tr>
-            }
           </thead>
 
           <tbody class="divide-y divide-gray-100 bg-white">
@@ -224,7 +163,6 @@
               <div>
                 <p class="font-semibold text-gray-900">{{item.name}}</p>
                 <p class="text-sm text-gray-400 mt-0.5">{{item.internal}}</p>
-
               </div>
             </td>
             <td class="py-2 px-3 text-center">
@@ -258,32 +196,17 @@
       </div>
     </div>
   </div>
-  @if (notification.show) {
-    <div
-      class="fixed bottom-6 right-6 z-50 flex items-center gap-3 px-4 py-3 rounded-xl shadow-lg border animate-fade-in-up transition-all"
-      [class]="notification.type === 'success' ? 'bg-green-50 border-green-200 text-green-800' : 'bg-red-50 border-red-200 text-red-800'"
-    >
-      @if (notification.type === 'success') {
-        <div class="p-1 bg-green-100 rounded-full text-green-600">
-          <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path></svg>
-        </div>
-      }
-
-      @if (notification.type === 'error') {
-        <div class="p-1 bg-red-100 rounded-full text-red-600">
-          <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path></svg>
-        </div>
-      }
-
-      <p class="font-semibold text-sm mr-2">{{ notification.message }}</p>
-
-      <button
-        (click)="notification.show = false"
-        class="p-1 hover:bg-black/5 rounded-md transition-colors"
-      >
-        <svg class="w-4 h-4 opacity-50" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path></svg>
-      </button>
-    </div>
+  @if(notificationState.show){
+    <app-notification
+      [message]="notificationState.message"
+      [type]="notificationState.type"
+      (closeEvent)="notificationState.show = false"/>
   }
-
+@if(addMode === 'modal'){
+  <app-price-list-modal
+    (chooseProducts)="onChooseProducts($event)"
+    (close)="addMode='scratch'"
+    [chosenItemsInput]="chosenItems"
+  ></app-price-list-modal>
+}
 </div>

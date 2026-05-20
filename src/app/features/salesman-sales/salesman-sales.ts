@@ -1,4 +1,4 @@
-import {Component, OnInit} from '@angular/core';
+import {ChangeDetectorRef, Component, OnInit} from '@angular/core';
 import {ButtonSmall} from '../../shared/button-small/button-small';
 import {FilterPill} from '../../shared/fitler-pill/filter-pill.component';
 import {RouterLink} from '@angular/router';
@@ -17,14 +17,16 @@ import {SaleStages} from '../../core/sale/models/Stage.model';
 import {StageOperationReq} from '../../core/sale/models/StageOperationReq';
 import {FormatEnumPipe} from '../../shared/format-enum-pipe';
 import {SaleUpdateReq} from '../../core/sale/models/SaleUpdateReq';
+import {Notification} from "../../shared/notification/notification";
+import {NotificationState} from '../../shared/notification/NotificationState';
 
 @Component({
   selector: 'app-salesman-sales',
-  imports: [
-    ButtonSmall, FilterPill, RouterLink, AsyncPipe,
-    LowerCasePipe, DecimalPipe, DatePipe, ReactiveFormsModule,
-    FormsModule, FormatEnumPipe
-  ],
+    imports: [
+        ButtonSmall, FilterPill, RouterLink, AsyncPipe,
+        LowerCasePipe, DecimalPipe, DatePipe, ReactiveFormsModule,
+        FormsModule, FormatEnumPipe, Notification
+    ],
   templateUrl: './salesman-sales.html',
 })
 export class SalesmanSales implements OnInit {
@@ -48,6 +50,11 @@ export class SalesmanSales implements OnInit {
   isDateModalOpen = false;
   cancelModalOpened = false;
   addMode: 'list' | 'scratch' = 'list';
+  notificationState: NotificationState = {
+    show: false,
+    message: '',
+    type: 'success'
+  };
 
   selectedSale = new BehaviorSubject<SaleCreationResp | null>(null);
   latestPrices!: Observable<ListItem[]>;
@@ -63,7 +70,8 @@ export class SalesmanSales implements OnInit {
   };
   protected readonly availableUnits = PRODUCT_UNITS;
 
-  constructor(private saleService: SaleService, private fb: FormBuilder, private priceService: PriceListService) {
+  constructor(private saleService: SaleService, private fb: FormBuilder,
+              private priceService: PriceListService, private cdr: ChangeDetectorRef) {
     this.itemForm = this.fb.group({
       prodId: ['', Validators.required],
       amount: [null, [Validators.required, Validators.min(0.01)]]
@@ -181,7 +189,7 @@ export class SalesmanSales implements OnInit {
 
       const mappedSaleItems: SaleItem[] = currentItems
         .filter(i => i.prodId !== null)
-        .map(i => ({ prodId: i.prodId!, amount: i.amount }));
+        .map(i => ({ prodId: i.prodId!, amount: i.amount ,unitPrice: '0'}));
 
       const mappedCustomItems: SaleScratchItem[] = currentItems
         .filter(i => i.prodId === null)
@@ -197,12 +205,12 @@ export class SalesmanSales implements OnInit {
       this.saleService.updateSale(saleUpdate).subscribe({
         next: (val) => {
           this.selectedSale.next(val);
-          this.showNotification('success', 'Zamówienie zostało zaktualizowane!');
+          this.triggerNotification('success', 'Zamówienie zostało zaktualizowane!');
           this.itemsSnapshot = [...this.itemsState.getValue()];
           this.editSaleMode = false;
           this._refreshSales.next();
         },
-        error: (err: Error) => this.showNotification('error', err.message)
+        error: (err: Error) => this.triggerNotification('error', err.message)
       });
     }
   }
@@ -229,15 +237,23 @@ export class SalesmanSales implements OnInit {
     this.saleService.changeSaleStage(stageReq).subscribe({
       next: (val) => {
         this.selectedSale.next(val);
-        this.showNotification('success', 'Zamówienie zmieniło status');
+        this.triggerNotification('success', 'Zamówienie zmieniło status');
         this._refreshSales.next();
       },
-      error: (err: Error) => this.showNotification('error', err.message)
+      error: (err: Error) => this.triggerNotification('error', err.message)
     });
   }
 
-  showNotification(type: 'success' | 'error', message: string) {
-    this.notification = { show: true, type, message };
-    setTimeout(() => { this.notification.show = false; }, 4000);
+  triggerNotification(type: 'success' | 'error', message: string) {
+    this.notificationState = {
+      show: true,
+      type: type,
+      message: message
+    };
+
+    setTimeout(() => {
+      this.notificationState.show = false;
+      this.cdr.detectChanges();
+    }, 5000);
   }
 }

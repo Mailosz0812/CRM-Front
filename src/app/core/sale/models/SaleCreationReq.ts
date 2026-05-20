@@ -12,6 +12,7 @@ export interface SaleCreationReq{
 export interface SaleItem{
   prodId: string,
   amount: string,
+  unitPrice: string,
 }
 
 export interface SaleScratchItem{

@@ -33,4 +33,15 @@
   .normal-client {
     @apply font-medium text-gray-800 hover:bg-gray-50 cursor-pointer border-l-4 border-transparent hover:border-gray-400 transition;
   }
+  .chosen {
+    @apply  bg-green-50 border-green-200 shadow-[inset_4px_0_0_0_#16a34a];
+  }
+
+  .default-product {
+    @apply hover:bg-gray-50 cursor-pointer transition-colors duration-150 border-transparent border-l-4;
+  }
+
+  .invalid {
+    @apply  ring-2 ring-red-400/60
+  }
 }

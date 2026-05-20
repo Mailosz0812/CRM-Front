@@ -1,0 +1,167 @@
+<div class="fixed inset-0 bg-black/50 z-50 flex items-center justify-center backdrop-blur-xs p-3">
+  <div class="flex flex-col bg-white rounded-xl shadow-xl w-full p-6 lg:h-full gap-2">
+    <div class="flex justify-between">
+      <h1 class="text-2xl font-bold text-gray-900">Cennik bazowy</h1>
+      <div class="flex gap-3">
+        <app-button-small
+          [buttonText]="'Zapisz'"
+          (clickEvent)="onSaveItems()"
+        />
+        <app-button-small
+          [buttonText]="'Zamknij'"
+          (clickEvent)="onClose()"
+        />
+      </div>
+    </div>
+    <div class="flex flex-1 flex-col xl:min-h-0 gap-3 border-t pt-3 border-gray-200">
+      <app-products-filter
+        [products]="dataSource()"
+        (onFilterProducts)="onFiltered($event)"
+      />
+
+      <div class="border border-gray-200 rounded-xl shadow-sm flex flex-col xl:min-h-0 bg-white">
+        <div class="xl:overflow-y-auto xl:min-h-0 overflow-x-auto">
+          <table class="w-full text-left xl:min-h-0">
+            <thead class="bg-gray-50 border-b border-gray-200 text-sm uppercase tracking-wider text-gray-500 xl:sticky xl:top-0 z-20">
+            <tr>
+              <td class="py-3 px-4 font-bold">Nazwa</td>
+              <td class="py-3 px-4 font-bold text-left">Producent</td>
+              <td class="py-3 px-4 font-bold text-right">Cena</td>
+              <td class="py-3 px-4 font-bold text-right">j.m</td>
+              <td class="py-3 px-4 font-bold text-right">Opakowanie</td>
+              <td class="py-3 px-4 font-bold text-right">TPS</td>
+            </tr>
+            </thead>
+            @if(this.stagingItems.size > 0){
+              <tbody class="xl:sticky xl:top-10 bg-white z-10">
+              <tr (click)="onToggleStaging()" class="cursor-pointer bg-gray-50/50 hover:bg-gray-100 transition-colors">
+                <td colspan="7" class="py-2 px-4">
+                  <div class="flex items-center gap-2 text-xs font-bold text-gray-500 uppercase tracking-wider">
+                    <svg
+                      [class.rotate-180]="!stagingExpanded"
+                      class="w-4 h-4 transition-transform duration-200"
+                      fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7" />
+                    </svg>
+                    <span class="ml-auto text-[10px] font-medium lowercase text-gray-400">
+                      {{ stagingExpanded ? 'Kliknij, aby zwinąć' : 'Kliknij, aby rozwinąć' }}
+                    </span>
+                  </div>
+                </td>
+              </tr>
+                @if(stagingExpanded){
+                  @for(chosenItem of stagingItems.values(); track chosenItem.id){
+                    <tr class="chosen">
+                      <td class="flex py-2 px-2 items-center">
+                        <button
+                          class="px-2 text-sm text-gray-700 "
+                          (click)="onRemoveItem(chosenItem.id!)"
+                        >
+                          <svg class="w-5 h-5 text-gray-500" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                            <path d="M3 6h18"></path>
+                            <path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path>
+                            <line x1="10" y1="11" x2="10" y2="17"></line>
+                            <line x1="14" y1="11" x2="14" y2="17"></line>
+                          </svg>
+                        </button>
+                        <div class="ml-2">
+                          <p class="font-semibold text-gray-900">{{ chosenItem.name }}</p>
+                          <p class="text-sm text-gray-400 mt-0.5">{{ chosenItem.internal }}</p>
+                        </div>
+                      </td>
+                      <td>
+                        <p class="font-semibold text-gray-900">{{ chosenItem.producer }}</p>
+                      </td>
+                      <td class="py-2 px-3 text-right">
+                        <input #pInp type="number" step="0.01" [value]="chosenItem.unitPrice"
+                               (input)="updateUnitPrice(chosenItem.id!,pInp)"
+                               class="w-20 text-right px-2 py-1 border border-green-200 rounded-lg font-semibold focus:ring-2 focus:ring-primary/20 focus:border-primary outline-none" /> zł
+                      </td>
+                      <td class="py-2 px-3 text-right">{{ chosenItem.unit | lowercase}}</td>
+                      <td>
+                        <p class="text-sm text-gray-500 text-right mr-2">{{ chosenItem.pack }}</p>
+                      </td>
+                      <td class="text-right">
+                        <input
+                          #tpsInp
+                          class="w-35 text-right text-gray-800 px-2 py-1 border border-green-200 rounded-lg font-semibold focus:ring-2 focus:ring-primary/20 focus:border-primary outline-none mr-2"
+                          type="date"
+                          [value]="chosenItem.tps | date: 'yyyy-MM-dd'"
+                          (input)="updateTps(chosenItem.id!,tpsInp)"
+                        />
+                      </td>
+                    </tr>
+                  }
+                  <tr class="h-4 bg-gray-50 border-b border-gray-200 shadow-[inner_0_-4px_6px_-1px_rgba(0,0,0,0.05)]">
+                    <td colspan="6" class="py-0">
+                      <div class="w-full h-full flex items-center justify-center">
+                        <div class="h-1 w-12 bg-gray-300 rounded-full"></div>
+                      </div>
+                    </td>
+                  </tr>
+                }
+
+              </tbody>
+            }
+            <tbody class="divide-y divide-gray-100 bg-white">
+              @for(item of (products() | async); track item.id){
+                <tr (click)="onChooseItem(item)"
+                    [class.opacity-50]="stagingItems.get(item.id!)"
+                    [class.default-product]="stagingItems.get(item.id!)">
+                  <td class="flex py-2 px-2 items-center">
+                    <div class="ml-2">
+                      <p class="font-semibold text-gray-900">{{item.name}}</p>
+                      <p class="text-sm text-gray-400 mt-0.5">{{item.internal}}</p>
+                    </div>
+                  </td>
+                  <td class="py-2 px-3 text-left">
+                    <p class="font-semibold text-gray-900">{{ item.producer }}</p>
+                  </td>
+                  <td class="py-2 px-3 text-right">
+                    <span class="font-semibold text-gray-800 px-2.5 py-1 rounded-md">{{ item.unitPrice }}</span>
+                  </td>
+                  <td class="py-2 px-3 text-right text-gray-600 font-medium">
+                    {{ item.unit | lowercase}}
+                  </td>
+                  <td>
+                    <p class="font-semibold text-gray-800 text-right mr-2">{{ item.pack }}</p>
+                  </td>
+                  <td>
+                    <p class="font-semibold text-gray-800 text-right mr-2">{{ item.tps | date: 'dd.MM.yyy' }}</p>
+                  </td>
+                </tr>
+              } @empty {
+                <tr>
+                  <td colspan="6">
+                    <div class="flex flex-col items-center justify-center py-12 px-4 text-center">
+                      <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2" class="h-16 w-16 text-gray-200 mb-4">
+                        <path stroke-linecap="round" stroke-linejoin="round" d="M8.25 7.5V6.108c0-1.135.845-2.098 1.976-2.192.373-.03.748-.057 1.123-.08M15.75 18H18a2.25 2.25 0 0 0 2.25-2.25V6.108c0-1.135-.845-2.098-1.976-2.192a48.424 48.424 0 0 0-1.123-.08M15.75 18.75v-1.875a3.375 3.375 0 0 0-3.375-3.375h-1.5a1.125 1.125 0 0 1-1.125-1.125v-1.5A3.375 3.375 0 0 0 6.375 7.5H5.25m11.9-3.664A2.251 2.251 0 0 0 15 2.25h-1.5a2.251 2.251 0 0 0-2.15 1.586m5.8 0c.065.21.1.433.1.664v.75h-6V4.5c0-.231.035-.454.1-.664M6.75 7.5H4.875c-.621 0-1.125.504-1.125 1.125v12c0 .621.504 1.125 1.125 1.125h9.75c.621 0 1.125-.504 1.125-1.125V16.5a9 9 0 0 0-9-9Z" />
+                      </svg>
+                      <h3 class=" font-bold text-[#1e293b] uppercase tracking-wider">
+                        Brak produktów w cenniku
+                      </h3>
+                    </div>
+                  </td>
+                </tr>
+              }
+            </tbody>
+            <tfoot>
+            <tr>
+              <td
+                colspan="6"
+                class="p-6 text-right"
+              >
+            </tr>
+            </tfoot>
+          </table>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+@if(notificationState.show){
+  <app-notification
+    [message]="notificationState.message"
+    [type]="notificationState.type"
+    (closeEvent)="notificationState.show = false"/>
+}
