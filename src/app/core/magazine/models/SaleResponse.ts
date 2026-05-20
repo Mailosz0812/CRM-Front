@@ -17,5 +17,6 @@ export interface SaleItemWarehouseView{
   name: string,
   unit: ProductUnit,
   amount: string,
-  internal: string
+  internal: string,
+  category: string
 }

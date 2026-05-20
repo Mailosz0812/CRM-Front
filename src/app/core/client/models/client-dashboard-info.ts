@@ -1,10 +1,10 @@
-import {ListItem} from '../../pricelist/models/price-list-response';
+import {ListItem, ShortPriceList} from '../../pricelist/models/price-list-response';
 import {SaleStages} from '../../sale/models/Stage.model';
 
 export interface ClientDashboardInfo{
   clientInfo: ClientWidgetInfo,
   recentSales: ShortSaleResp[],
-  recentPrices: ListItem[]
+  recentPrices: ShortPriceList
 }
 
 export interface ClientWidgetInfo{
