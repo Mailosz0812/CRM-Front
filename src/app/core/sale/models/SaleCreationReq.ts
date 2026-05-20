@@ -13,6 +13,9 @@ export interface SaleItem{
   prodId: string,
   amount: string,
   unitPrice: string,
+  unit: ProductUnit,
+  tps: string,
+  pack: string,
 }
 
 export interface SaleScratchItem{
@@ -20,5 +23,7 @@ export interface SaleScratchItem{
   internal: string,
   unitPrice: string,
   unit: ProductUnit,
-  amount: string
+  amount: string,
+  tps: string,
+  pack: string
 }

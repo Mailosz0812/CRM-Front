@@ -35,4 +35,11 @@ export class SaleService{
     return this.client.put<SaleCreationResp>(this.url,sale);
   }
 
+  getSalePrint(saleId: string){
+    const path = this.url + '/' + saleId + '/print';
+    return this.client.get(path,{
+      responseType: 'blob'
+    });
+  }
+
 }

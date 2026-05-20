@@ -16,5 +16,4 @@ export class Notification {
 
   @Output() closeEvent = new EventEmitter<boolean>();
 
-
 }

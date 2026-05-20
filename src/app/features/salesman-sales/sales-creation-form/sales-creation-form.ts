@@ -2,9 +2,9 @@ import {ChangeDetectorRef, Component, OnInit} from '@angular/core';
 import {FormBuilder, FormGroup, ReactiveFormsModule, Validators} from '@angular/forms';
 import {PriceListService} from '../../../core/pricelist/PriceListService';
 import {ClientService} from '../../../core/client/client.service';
-import {filter, Observable, shareReplay, switchMap, tap} from 'rxjs';
+import {BehaviorSubject, filter, Observable, shareReplay, switchMap, tap} from 'rxjs';
 import {ClientShortResp} from '../../../core/client/models/client-short-resp';
-import {AsyncPipe, CurrencyPipe, DecimalPipe, LowerCasePipe} from '@angular/common';
+import {AsyncPipe, CurrencyPipe, DatePipe, DecimalPipe, LowerCasePipe} from '@angular/common';
 import {ListItem} from '../../../core/pricelist/models/price-list-response';
 import {PRODUCT_UNITS} from '../../../core/pricelist/models/unit.model';
 import {SaleCreationReq, SaleItem, SaleScratchItem} from '../../../core/sale/models/SaleCreationReq';
@@ -13,6 +13,8 @@ import {SaleService} from '../../../core/sale/SaleService';
 import {CartEntry, PriceListModal} from '../price-list-modal/price-list-modal';
 import {Notification} from '../../../shared/notification/notification';
 import {NotificationState} from '../../../shared/notification/NotificationState';
+import {BasePriceListResponse} from '../../../core/pricelist/models/BasePrice-list';
+import {ProductService} from '../../../core/pricelist/ProductService';
 
 @Component({
   selector: 'app-sales-creation-form',
@@ -23,26 +25,22 @@ import {NotificationState} from '../../../shared/notification/NotificationState'
     LowerCasePipe,
     DecimalPipe,
     PriceListModal,
-    Notification
+    Notification,
+    DatePipe
   ],
   templateUrl: './sales-creation-form.html',
 })
 export class SalesCreationForm implements OnInit{
   infoForm: FormGroup;
-  newItemForm: FormGroup;
   newScratchItem: FormGroup;
 
   clientsList!: Observable<ClientShortResp[]>
-  availableProducts!: Observable<ListItem[]>
-  cachedProducts: ListItem[] = [];
-  selectedProduct: ListItem | null = null;
-  grossPrice: number = 0.0;
+  producers$ = new BehaviorSubject<Set<string>>(new Set());
+  baseProducts: ListItem[] = [];
 
-  addMode: 'modal' | 'scratch' = 'scratch';
-
+  individualProducts: ListItem[] = [];
   chosenItems: CartEntry[] = [];
   sum: number = 0;
-
   saleViewItems: SaleItemView[] = [];
 
   notificationState: NotificationState = {
@@ -50,11 +48,14 @@ export class SalesCreationForm implements OnInit{
     message: '',
     type: 'success'
   };
+  addMode: 'modal' | 'scratch' = 'scratch';
+  preselectedClientId: string;
 
   readonly availableUnits = PRODUCT_UNITS;
   constructor(private fb: FormBuilder,private priceService: PriceListService,
               private clientService: ClientService,private saleService: SaleService,
-              private cdr: ChangeDetectorRef) {
+              private cdr: ChangeDetectorRef, private productService: ProductService) {
+    this.preselectedClientId = history.state.preselectedClientId;
     this.infoForm = fb.group({
       saleName: ['',Validators.required],
       clientId: ['', Validators.required],
@@ -62,59 +63,58 @@ export class SalesCreationForm implements OnInit{
       warehouseNote: ['']
     });
 
-    this.newItemForm = fb.group({
-      productId: ['', Validators.required],
-      amount: [null,[Validators.required,Validators.min(0.01)]],
-    });
 
     this.newScratchItem = fb.group({
       name: ['',Validators.required],
       internal: ['', Validators.required],
       unitPrice: [null,Validators.required],
       unit: [null,Validators.required],
-      amount: [null,[Validators.required,Validators.min(0.01)]]
+      amount: [null,[Validators.required,Validators.min(0.01)]],
+      tps: [null, Validators.required],
+      pack: [''],
     })
 
+
+  }
+  ngOnInit() {
+    this.productService.getProducts().subscribe({
+      next: (resp) =>{
+        this.producers$.next(new Set([...resp]));
+      }
+    })
     this.clientsList = this.clientService.getClientsList();
-    this.availableProducts = this.infoForm.get('clientId')!.valueChanges.pipe(
+    this.priceService.getBasePriceList().subscribe({
+      next:(resp) => {
+        this.baseProducts = resp.productList;
+      },
+      error: (err) => {
+        this.triggerNotification('error','Wystąpił błąd podczas ładowania cennika bazowego.')
+      }
+    });
+    this.infoForm.get('clientId')!.valueChanges.pipe(
       filter(clientId => !!clientId),
       switchMap(clientId => {
         return this.priceService.getLatestItemsByClientId(clientId);
-      }),
-      tap(products => {
-        this.cachedProducts = products;
-
-        this.newItemForm.reset();
+      })
+    ).subscribe({
+      next: (products) => {
+        this.individualProducts = products.items;
         this.newScratchItem.reset();
-      }),
-      shareReplay(1)
-    );
-  }
-  ngOnInit() {
-    this.newItemForm.get('productId')!.valueChanges.subscribe(selectedId => {
-      if (selectedId) {
-        this.selectedProduct = this.cachedProducts.find(p => p.id === selectedId) || null;
-      } else {
-        this.selectedProduct = null;
+        console.log(products);
+      },
+      error: (err) => {
+        this.triggerNotification('error', 'Nie udało się pobrać cennika indywidualnego.');
       }
     });
-    this.newItemForm.get('amount')!.valueChanges.subscribe(amount => {
-      if(this.selectedProduct && amount) {
-        const parsedAmount = Number(amount);
-        const parsedPrice = Number(this.selectedProduct.unitPrice);
-
-        this.grossPrice = parsedAmount * parsedPrice;
-      } else {
-        this.grossPrice = 0.0;
-      }
-    })
+    if (this.preselectedClientId) {
+      this.infoForm.get('clientId')?.setValue(this.preselectedClientId);
+    }
   }
   onAddScratch(){
     if(this.newScratchItem.invalid){
       return;
     }
-    const {name, unitPrice, unit, amount, internal} = this.newScratchItem.value
-
+    const {name, unitPrice, unit, amount, internal,tps, pack} = this.newScratchItem.value
     const parsedAmount = Number(amount);
     const parsedPrice = Number(unitPrice);
 
@@ -126,7 +126,9 @@ export class SalesCreationForm implements OnInit{
       unit: unit,
       unitPrice: unitPrice,
       amount: amount,
-      sum: sum1
+      sum: sum1,
+      pack: pack,
+      tps: new Date(tps).toISOString()
     };
 
     this.saleViewItems.push(itemView);
@@ -143,20 +145,23 @@ export class SalesCreationForm implements OnInit{
       const sum1 = +entry.saleItem.amount * +entry.saleItem.unitPrice;
       itemsSum+=sum1
       return ({
-          prodId: entry.saleItem.prodId,
-          name: entry.item.name,
-          internal: entry.item.internal,
-          unit: entry.item.unit,
-          unitPrice: entry.saleItem.unitPrice,
-          amount: entry.saleItem.amount,
-          sum: sum1
+        prodId: entry.saleItem.prodId,
+        name: entry.item.name,
+        internal: entry.item.internal,
+        unit: entry.saleItem.unit,
+        unitPrice: entry.saleItem.unitPrice,
+        amount: entry.saleItem.amount,
+        sum: sum1,
+        tps: entry.saleItem.tps,
+        pack: entry.saleItem.pack
         });
     });
+    scratchItems.forEach(item => {
+      itemsSum += item.sum;
+    })
     this.sum = itemsSum;
     this.saleViewItems = [...modalItems, ... scratchItems];
   }
-
-
 
   onDeleteItem(item: SaleItemView,idx: number){
     if (item.prodId) {
@@ -186,14 +191,19 @@ export class SalesCreationForm implements OnInit{
       .map(item => ({
         prodId: item.prodId!,
         amount: item.amount,
-        unitPrice: item.unitPrice
+        unitPrice: item.unitPrice,
+        unit: item.unit,
+        tps: item.tps,
+        pack: item.pack,
       }));
     const customItems: SaleScratchItem[] = this.getScratchItems().map(item => ({
       name: item.name,
       internal: item.internal,
       unitPrice: item.unitPrice,
       unit: item.unit,
-      amount: item.amount
+      amount: item.amount,
+      tps: item.tps,
+      pack: item.pack
     }));
 
     const saleCreationReq: SaleCreationReq = {
@@ -204,20 +214,24 @@ export class SalesCreationForm implements OnInit{
       saleItems: saleItems,
       customItems: customItems,
     }
+    console.log(saleCreationReq)
     this.saleService.createSale(saleCreationReq).subscribe({
       next: (resp) => {
-        this.newItemForm.reset();
         this.newScratchItem.reset();
         this.infoForm.reset();
         this.saleViewItems = [];
+        this.chosenItems = [];
+        this.sum = 0;
         this.triggerNotification('success', 'Zamówienie zostało utworzone pomyślnie!');
+
       },
       error: (err: Error) => {
+        console.log(err)
         this.triggerNotification('error', err.message);
       }
     })
   }
-  triggerNotification(type: 'success' | 'error', message: string) {
+  private triggerNotification(type: 'success' | 'error', message: string) {
     this.notificationState = {
       show: true,
       type: type,

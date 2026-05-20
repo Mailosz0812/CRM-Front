@@ -1,11 +1,14 @@
 import {ChangeDetectorRef, Component, EventEmitter, Input, OnInit, Output} from '@angular/core';
 import {ButtonSmall} from '../../../shared/button-small/button-small';
 import {ListItem} from '../../../core/pricelist/models/price-list-response';
-import {AsyncPipe, DecimalPipe, LowerCasePipe} from '@angular/common';
+import {AsyncPipe, DatePipe, DecimalPipe, LowerCasePipe} from '@angular/common';
 import {FormatEnumPipe} from '../../../shared/format-enum-pipe';
 import {SaleItem} from '../../../core/sale/models/SaleCreationReq';
-import {BehaviorSubject} from 'rxjs';
+import {BehaviorSubject, Observable, combineLatest, map} from 'rxjs';
 import {PRODUCT_UNITS} from '../../../core/pricelist/models/unit.model';
+import {FormsModule} from '@angular/forms';
+import {ProductService} from '../../../core/pricelist/ProductService';
+import {ProductsFilter} from '../../../shared/products-filter/products-filter';
 export interface CartEntry{
   item: ListItem,
   saleItem: SaleItem
@@ -18,19 +21,23 @@ export interface CartEntry{
     DecimalPipe,
     FormatEnumPipe,
     LowerCasePipe,
-    AsyncPipe
+    AsyncPipe,
+    DatePipe,
+    FormsModule,
+    ProductsFilter
   ],
   templateUrl: './price-list-modal.html',
 })
 
 export class PriceListModal implements OnInit{
-  // @Input({
-  //   required:true
-  // })
-  // clientId!: string
 
   @Input() chosenItemsInput!: CartEntry[];
-  isStagingExpanded = false;
+  @Input()
+  individualItems!: ListItem[];
+  @Input({
+    required: true
+  })
+  items!: ListItem[];
 
   @Output() chooseProducts = new EventEmitter<CartEntry[]>();
   @Output() close = new EventEmitter<boolean>();
@@ -40,24 +47,16 @@ export class PriceListModal implements OnInit{
     type: 'success',
     message: ''
   };
-
-  individualItems: ListItem[] = [
-
-  ]
-  items: ListItem[] = []
+  isStagingExpanded= false;
+  priceListMode: 'base' | 'individual' = 'base';
 
   private _prodSubject = new BehaviorSubject<ListItem[]>([]);
-
+  private _dataSource = new BehaviorSubject<ListItem[]>([]);
   prodMap = new Map<string,boolean>();
   chosenProdMap = new Map<string,CartEntry>();
 
-
-  priceListMode: 'base' | 'individual' = 'base';
-
   constructor(private cdr: ChangeDetectorRef) {}
-
   ngOnInit(): void {
-
     this.items.forEach(item => {
       this.prodMap.set(item.id!,false);
     })
@@ -72,6 +71,7 @@ export class PriceListModal implements OnInit{
       });
     }
     this._prodSubject.next(this.items);
+    this._dataSource.next(this.items);
   }
   onClose(){
     this.close.emit(true);
@@ -84,7 +84,10 @@ export class PriceListModal implements OnInit{
         saleItem: {
           prodId: item.id!,
           amount: '',
-          unitPrice: item.unitPrice
+          unitPrice: item.unitPrice,
+          unit: item.unit,
+          tps: item.tps,
+          pack: item.pack
         }
       });
       this.cdr.detectChanges();
@@ -96,27 +99,43 @@ export class PriceListModal implements OnInit{
       this.prodMap.set(prodId,false);
     }
   }
-  productSubject(){
+
+  dataSource() {
+    return this._dataSource.asObservable();
+  }
+  products(){
     return this._prodSubject.asObservable();
   }
 
-  updateItemField(prodId: string, field: keyof SaleItem, value: string) {
+  onFiltered(items: ListItem[]){
+    this._prodSubject.next(items);
+  }
+  updateItemField(prodId: string, field: keyof SaleItem, value: any) {
     const entry = this.chosenProdMap.get(prodId);
     if (!entry) return;
 
-    const numValue = parseFloat(value);
+    const numericFields: (keyof SaleItem)[] = ['unitPrice', 'amount'];
 
-    if (numValue < 0) {
-      entry.saleItem[field] = '0';
-    } else {
-      entry.saleItem[field] = value;
+    if (numericFields.includes(field)) {
+      const numValue = parseFloat(value);
+      entry.saleItem[field] = numValue < 0 ? '0' : value.toString();
+    } else if (field === 'unit') {
+      entry.saleItem.unit = value;
     }
   }
   normalizeValue(id: string, field: keyof SaleItem) {
     const entry = this.chosenProdMap.get(id);
-    if (entry) {
-      const num = parseFloat(entry.saleItem[field]);
-      entry.saleItem[field] = isNaN(num) ? '0' : num.toString();
+    if (!entry) return;
+
+    const numericFields: (keyof SaleItem)[] = ['unitPrice', 'amount'];
+
+    if (numericFields.includes(field)) {
+      const numericField = field as 'unitPrice' | 'amount';
+
+      const currentValue = entry.saleItem[numericField];
+      const num = parseFloat(currentValue);
+
+      entry.saleItem[numericField] = isNaN(num) ? '0' : num.toString();
     }
   }
 
@@ -152,12 +171,8 @@ export class PriceListModal implements OnInit{
 
   onPriceListMode(mode: 'base' | 'individual'){
     this.priceListMode = mode;
-    if(mode === 'base'){
-      this._prodSubject.next(this.items)
-    }else{
-      this._prodSubject.next(this.individualItems)
-
-    }
+    const targetItems = mode === 'base' ? this.items : this.individualItems;
+    this._dataSource.next(targetItems);
   }
 
   showNotification(type: 'success' | 'error', message: string) {
@@ -171,6 +186,6 @@ export class PriceListModal implements OnInit{
     this.isStagingExpanded = !this.isStagingExpanded;
   }
 
-  protected readonly parseFloat = parseFloat;
+
   protected readonly PRODUCT_UNITS = PRODUCT_UNITS;
 }

@@ -7,5 +7,7 @@ export interface SaleItemView{
   unitPrice: string,
   unit: ProductUnit,
   amount: string,
+  tps: string,
+  pack: string,
   sum: number
 }

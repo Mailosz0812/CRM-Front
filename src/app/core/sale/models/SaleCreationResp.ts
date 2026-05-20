@@ -21,5 +21,7 @@ export interface SaleItemResp{
   unitPrice: string,
   unit: ProductUnit,
   amount: string,
-  sumPrice: string
+  sumPrice: string,
+  tps: string,
+  pack: string,
 }

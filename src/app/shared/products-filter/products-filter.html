@@ -1,0 +1,46 @@
+<div class="flex flex-col gap-5 p-2 sm:items-center sm:flex-row flex-wrap">
+  <div class="flex flex-col gap-1">
+    <label class="text-sm font-bold text-gray-500 uppercase ml-1">Szukaj produktu</label>
+    <input
+      type="text"
+      placeholder="Np. Krakowska Sucha..."
+      (input)="onSearchChange($event)"
+      class="px-3 py-2 border rounded-lg border-gray-300 focus:ring-2 focus:ring-primary/20 focus:border-primary outline-none transition-all w-64 text-sm"
+    />
+  </div>
+
+  <div class="flex flex-col gap-1">
+    <label class="text-sm font-bold text-gray-500 uppercase ml-1">Kategoria</label>
+    <select
+      (change)="onCategoryChange($event)"
+      class="px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary/20 focus:border-primary outline-none bg-white text-sm w-48"
+    >
+      <option [value]="null" selected>Wszystkie</option>
+      @for(category of (categories$ | async); track category.name){
+        <option [value]="category.name">{{category.name}}</option>
+      }
+    </select>
+  </div>
+
+  <div class="flex flex-col gap-1">
+    <label class="text-sm font-bold text-gray-500 uppercase ml-1">Producent</label>
+    <select
+      (change)="onProducerChange($event)"
+      class="px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary/20 focus:border-primary outline-none bg-white text-sm w-48"
+    >
+      <option [value]="null" selected>Wszystkie</option>
+      @for(producer of (producers$ | async); track producer){
+        <option [value]="producer">{{producer}}</option>
+      }
+    </select>
+  </div>
+
+  <div class="flex flex-col gap-1">
+    <label class="text-sm font-bold text-gray-500 uppercase ml-1">TPS</label>
+    <input
+      type="date"
+      (change)="onDateChange($event)"
+      class="px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary/20 focus:border-primary outline-none text-sm"
+    />
+  </div>
+</div>
