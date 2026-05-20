@@ -6,6 +6,8 @@ import { first } from 'rxjs/operators';
 import {FormsModule, ReactiveFormsModule} from '@angular/forms';
 import {catchError, EMPTY} from 'rxjs';
 import {Notification} from '../../shared/notification/notification';
+import {SalePrintHelper} from '../../core/sale/SalePrintHelper';
+import {SaleService} from '../../core/sale/SaleService';
 
 type NotificationState = { show: boolean; type: 'success' | 'error'; message: string };
 
@@ -17,7 +19,8 @@ type NotificationState = { show: boolean; type: 'success' | 'error'; message: st
 export class Sales {
   private magazineService = inject(MagazineService);
 
-  constructor(private cdr: ChangeDetectorRef) {}
+  constructor(private cdr: ChangeDetectorRef,private salePrintHelper: SalePrintHelper,
+              private saleService: SaleService) {}
 
   targetDate:string = this.getTodayString();
   private previousDate = this.getTodayString();
@@ -94,5 +97,12 @@ export class Sales {
     const day = String(today.getDate()).padStart(2, '0');
 
     return `${year}-${month}-${day}`;
+  }
+  onPrintSale(saleId: string){
+    this.saleService.getSalePrint(saleId).subscribe({
+      next: (resp) => {
+        this.salePrintHelper.onPrintSale(resp);
+      }
+    })
   }
 }
