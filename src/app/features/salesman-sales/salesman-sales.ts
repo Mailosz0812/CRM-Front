@@ -3,7 +3,7 @@ import {ButtonSmall} from '../../shared/button-small/button-small';
 import {FilterPill} from '../../shared/fitler-pill/filter-pill.component';
 import {RouterLink} from '@angular/router';
 import {SaleService} from '../../core/sale/SaleService';
-import {BehaviorSubject, Observable, map, switchMap, tap} from 'rxjs';
+import {BehaviorSubject, Observable, map, switchMap, tap, combineLatest} from 'rxjs';
 import {ShortSaleResp} from '../../core/client/models/client-dashboard-info';
 import {AsyncPipe, DatePipe, DecimalPipe, LowerCasePipe} from '@angular/common';
 import {SaleCreationResp} from '../../core/sale/models/SaleCreationResp';
@@ -19,14 +19,17 @@ import {FormatEnumPipe} from '../../shared/format-enum-pipe';
 import {SaleUpdateReq} from '../../core/sale/models/SaleUpdateReq';
 import {Notification} from "../../shared/notification/notification";
 import {NotificationState} from '../../shared/notification/NotificationState';
+import {CartEntry, PriceListModal} from './price-list-modal/price-list-modal';
+import {BasePriceListResponse} from '../../core/pricelist/models/BasePrice-list';
+import {SalePrintHelper} from '../../core/sale/SalePrintHelper';
 
 @Component({
   selector: 'app-salesman-sales',
-    imports: [
-        ButtonSmall, FilterPill, RouterLink, AsyncPipe,
-        LowerCasePipe, DecimalPipe, DatePipe, ReactiveFormsModule,
-        FormsModule, FormatEnumPipe, Notification
-    ],
+  imports: [
+    ButtonSmall, FilterPill, RouterLink, AsyncPipe,
+    LowerCasePipe, DecimalPipe, DatePipe, ReactiveFormsModule,
+    FormsModule, FormatEnumPipe, Notification, PriceListModal
+  ],
   templateUrl: './salesman-sales.html',
 })
 export class SalesmanSales implements OnInit {
@@ -41,6 +44,11 @@ export class SalesmanSales implements OnInit {
 
   private _refreshSales = new BehaviorSubject<void>(undefined);
   sales!: Observable<ShortSaleResp[]>;
+
+  searchTerm$ = new BehaviorSubject<string>('');
+  stage$ = new BehaviorSubject<SaleStages | 'wszystkie'>('wszystkie')
+  filteredSales!: Observable<ShortSaleResp[]>;
+
 
   private currentSaleId!: string;
   targetDate: string | null = null;
@@ -57,11 +65,10 @@ export class SalesmanSales implements OnInit {
   };
 
   selectedSale = new BehaviorSubject<SaleCreationResp | null>(null);
-  latestPrices!: Observable<ListItem[]>;
-  cachedPrices: ListItem[] = [];
-  selectedProduct: ListItem | null = null;
+  latestPrices!: ListItem[];
+  chosenItems: CartEntry[] = [];
+  private _basePrices = new Map<string,ListItem>();
 
-  itemForm!: FormGroup;
   scratchItemForm: FormGroup;
   saleInfo: FormGroup;
 
@@ -71,21 +78,21 @@ export class SalesmanSales implements OnInit {
   protected readonly availableUnits = PRODUCT_UNITS;
 
   constructor(private saleService: SaleService, private fb: FormBuilder,
-              private priceService: PriceListService, private cdr: ChangeDetectorRef) {
-    this.itemForm = this.fb.group({
-      prodId: ['', Validators.required],
-      amount: [null, [Validators.required, Validators.min(0.01)]]
-    });
+              private priceService: PriceListService, private cdr: ChangeDetectorRef,
+              private salePrintHelper: SalePrintHelper) {
     this.scratchItemForm = this.fb.group({
       name: ['', Validators.required],
       internal: ['', Validators.required],
       unitPrice: [null, Validators.required],
       unit: [null, Validators.required],
-      amount: [null, [Validators.required, Validators.min(0.01)]]
+      amount: [null, [Validators.required, Validators.min(0.01)]],
+      tps: ['', Validators.required],
+      pack: ['']
     });
     this.saleInfo = this.fb.group({
       saleName: ['', Validators.required]
     });
+
   }
 
   ngOnInit(): void {
@@ -102,21 +109,44 @@ export class SalesmanSales implements OnInit {
         }
       })
     );
-
-    this.itemForm.get('prodId')!.valueChanges.subscribe(selectedId => {
-      this.selectedProduct = selectedId ? (this.cachedPrices.find(p => p.id === selectedId) || null) : null;
+    this.priceService.getBasePriceList().subscribe({
+      next: (basePriceList: BasePriceListResponse) => {
+        basePriceList.productList.forEach(item => {
+          this._basePrices.set(item.id!,item)
+        });
+      },
+      error: (err) => {
+        console.log(err);
+        this.triggerNotification('error','Błąd podczas ładowania cennika bazowego.')
+      }
     });
+
+    this.filteredSales = combineLatest([this.sales, this.searchTerm$, this.stage$])
+      .pipe(
+        map(([sales,term,stage]) => {
+          let list: ShortSaleResp[] = [...sales];
+          if(term !== ''){
+            list = list.filter(item =>
+              item.saleName.toLowerCase().includes(term.toLowerCase()) || item.clientName.toLowerCase().includes(term.toLowerCase()));
+          }
+
+          if(stage !== 'wszystkie'){
+            list = list.filter(item => item.stage === stage);
+          }
+
+          return list;
+        })
+      );
   }
 
   onSelectSale(saleId: string) {
     this.saleService.getSaleDetails(saleId).pipe(
       tap(value => {
-        this.latestPrices = this.priceService.getLatestItemsByClientId(value.clientId).pipe(
-          tap(prices => {
-            this.cachedPrices = prices;
-            this.itemForm.reset();
-          })
-        );
+        this.priceService.getLatestItemsByClientId(value.clientId).subscribe({
+          next: (individualPrices) => {
+            this.latestPrices = individualPrices.items
+          }
+        })
         const items: SaleItemView[] = value.saleItems.map(item => ({
           prodId: item.prodId,
           name: item.name,
@@ -124,8 +154,36 @@ export class SalesmanSales implements OnInit {
           unitPrice: item.unitPrice,
           unit: item.unit,
           amount: item.amount,
-          sum: +item.sumPrice
+          sum: +item.sumPrice,
+          tps: item.tps,
+          pack: item.pack
         }));
+
+        this.chosenItems = value.saleItems.map(item => {
+          const producer = !this._basePrices.get(item.prodId) ? '': this._basePrices.get(item.prodId)!.producer;
+          return ({
+            item: {
+              id: item.prodId,
+              name: item.name,
+              internal: item.internal,
+              unitPrice: item.unitPrice,
+              unit: item.unit,
+              producer: producer,
+              tps: item.tps,
+              pack: item.pack,
+              category: ""
+            },
+            saleItem: {
+              prodId: item.prodId,
+              amount: item.amount,
+              unitPrice: item.unitPrice,
+              unit: item.unit,
+              tps: item.tps,
+              pack: item.pack
+            }
+          });
+        });
+
 
         this.itemsState.next(items);
         this.itemsSnapshot = [...items];
@@ -138,31 +196,30 @@ export class SalesmanSales implements OnInit {
     });
   }
 
-  onAddItem() {
-    if (this.itemForm.valid && this.selectedProduct) {
-      const { prodId, amount } = this.itemForm.value;
-      const saleViewItem: SaleItemView = {
-        prodId,
-        name: this.selectedProduct.name,
-        internal: this.selectedProduct.internal,
-        unitPrice: this.selectedProduct.unitPrice,
-        unit: this.selectedProduct.unit,
-        amount,
-        sum: +amount * +this.selectedProduct.unitPrice
-      };
+  onChooseProducts(cartEntry: CartEntry[]){
+    this.chosenItems = cartEntry;
 
-      this.itemsState.next([...this.itemsState.getValue(), saleViewItem]);
-      this.itemForm.reset();
-    }
+    const scratchItems = this.itemsState.getValue().filter(item => !item.prodId);
+    const mappedModalItems: SaleItemView[] = cartEntry.map(item => ({
+      prodId: item.saleItem.prodId,
+      name: item.item.name,
+      internal: item.item.internal,
+      unitPrice: item.saleItem.unitPrice,
+      unit: item.saleItem.unit,
+      amount: item.saleItem.amount,
+      tps: item.item.tps,
+      pack: item.item.pack,
+      sum: +item.saleItem.unitPrice * +item.saleItem.amount
+    }));
+    this.itemsState.next([...mappedModalItems, ...scratchItems]);
   }
-
   onAddScratchItem() {
     if (this.scratchItemForm.valid) {
-      const { name, internal, unitPrice, unit, amount } = this.scratchItemForm.value;
+      const { name, internal, unitPrice, unit, amount,pack, tps } = this.scratchItemForm.value;
       const saleViewItem: SaleItemView = {
         prodId: null,
-        name, internal, unitPrice, unit, amount,
-        sum: +amount * +unitPrice
+        name, internal, unitPrice, unit, amount,pack,tps,
+        sum: +amount * +unitPrice,
       };
 
       this.itemsState.next([...this.itemsState.getValue(), saleViewItem]);
@@ -177,6 +234,9 @@ export class SalesmanSales implements OnInit {
       : currentItems.filter((_, index) => index !== idx);
 
     this.itemsState.next(filtered);
+    if (itemId) {
+      this.chosenItems = this.chosenItems.filter(entry => entry.saleItem.prodId !== itemId);
+    }
   }
 
   onEditSale() {
@@ -189,11 +249,26 @@ export class SalesmanSales implements OnInit {
 
       const mappedSaleItems: SaleItem[] = currentItems
         .filter(i => i.prodId !== null)
-        .map(i => ({ prodId: i.prodId!, amount: i.amount ,unitPrice: '0'}));
+        .map(i => ({
+          prodId: i.prodId!,
+          amount: i.amount ,
+          unitPrice: i.unitPrice,
+          unit: i.unit,
+          tps: new Date(i.tps).toISOString(),
+          pack: i.pack
+        }));
 
       const mappedCustomItems: SaleScratchItem[] = currentItems
         .filter(i => i.prodId === null)
-        .map(i => ({ name: i.name, internal: i.internal, unitPrice: i.unitPrice, unit: i.unit, amount: i.amount }));
+        .map(i => ({
+          name: i.name,
+          internal: i.internal,
+          unitPrice: i.unitPrice,
+          unit: i.unit,
+          amount: i.amount,
+          tps: new Date(i.tps).toISOString(),
+          pack: i.pack
+        }));
 
       const saleUpdate: SaleUpdateReq = {
         saleId: this.currentSaleId,
@@ -219,6 +294,16 @@ export class SalesmanSales implements OnInit {
     this.editSaleMode = false;
     this.itemsState.next([...this.itemsSnapshot]);
     this.saleInfo.patchValue({ saleName: this.selectedSale.getValue()?.saleName });
+
+    this.rebuildChosenItems(this.itemsSnapshot);
+  }
+
+  onPrintSale(saleId: string){
+    this.saleService.getSalePrint(saleId).subscribe({
+      next: (resp) => {
+        this.salePrintHelper.onPrintSale(resp);
+      }
+    })
   }
 
   confirmOperation(status: SaleStages) {
@@ -244,7 +329,47 @@ export class SalesmanSales implements OnInit {
     });
   }
 
-  triggerNotification(type: 'success' | 'error', message: string) {
+  onSearchChange(event: Event) {
+    const value = (event.target as HTMLInputElement).value;
+    this.searchTerm$.next(value);
+  }
+
+  onStageChange(stage: SaleStages | 'wszystkie'){
+    this.stage$.next(stage);
+  }
+
+  get basePrices(): ListItem[] {
+    return Array.from(this._basePrices.values())
+  }
+
+  private rebuildChosenItems(items: SaleItemView[]) {
+    this.chosenItems = items
+      .map(item => {
+        const producer = !this._basePrices.get(item.prodId!) ? '': this._basePrices.get(item.prodId!)!.producer;
+        return {
+          item: {
+            id: item.prodId!,
+            name: item.name,
+            internal: item.internal,
+            unitPrice: item.unitPrice,
+            unit: item.unit,
+            producer: producer,
+            tps: item.tps,
+            pack: item.pack,
+            category: ""
+          },
+          saleItem: {
+            prodId: item.prodId!,
+            amount: item.amount,
+            unitPrice: item.unitPrice,
+            unit: item.unit,
+            tps: item.tps,
+            pack: item.pack
+          }
+        };
+      });
+  }
+  private triggerNotification(type: 'success' | 'error', message: string) {
     this.notificationState = {
       show: true,
       type: type,

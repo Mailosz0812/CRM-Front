@@ -82,9 +82,9 @@
           <tr>
             <th class="py-3 px-4 font-bold">Produkt</th>
             <th class="py-3 px-3 font-bold text-center">Ilość</th>
-            <th class="py-3 px-3 font-bold text-center">Stan Magazynowy</th>
+            <th class="py-3 px-3 font-bold text-center">Tps</th>
             <th class="py-3 px-3 font-bold text-right">Cena jedn.</th>
-            <th class="py-3 px-3 font-bold text-right bg-green-50/50">Marża / szt.</th>
+            <th class="py-3 px-3 font-bold text-right bg-green-50/50">Opakowanie</th>
             <th class="py-3 px-4 font-bold text-right">Suma brutto</th>
             <th class="py-3 px-4 font-bold text-center">Akcja</th>
           </tr>
@@ -93,13 +93,13 @@
                   <input
                     type="text"
                     formControlName="name"
-                    placeholder="Wpisz nazwę produktu..."
+                    placeholder="Nazwa produktu..."
                     class="w-full text-sm py-2 px-3 border border-gray-300 rounded-lg bg-white focus:outline-none focus:ring-2 focus:ring-primary/50 focus:border-primary shadow-sm font-semibold text-gray-800"
                   >
                   <input
                     type="text"
                     formControlName="internal"
-                    placeholder="Wpisz nazwe magazynową..."
+                    placeholder="Nazwa magazynowa..."
                     class="w-full text-sm py-2 px-3 border border-gray-300 rounded-lg bg-white focus:outline-none focus:ring-2 focus:ring-primary/50 focus:border-primary shadow-sm font-semibold text-gray-800"
                   >
                 </td>
@@ -115,7 +115,7 @@
                       formControlName="unit"
                       class="font-semibold text-gray-500 text-sm py-2 border border-gray-300 rounded-lg bg-white focus:outline-none focus:ring-2 focus:ring-primary/50 focus:border-primary cursor-pointer"
                     >
-                      <option class="font-semibold" [ngValue]="null" disabled selected>Jednostka...</option>
+                      <option class="font-semibold" [ngValue]="null" disabled selected>Jednostka</option>
                       @for (unit of availableUnits; track unit) {
                         <option class="font-semibold" [value]="unit">{{ unit.toLowerCase() }}</option>
                       }
@@ -123,7 +123,12 @@
                   </div>
                 </td>
                 <td class="py-2 px-4 text-right text-gray-400 font-medium whitespace-nowrap text-xs">
-                  Brak (Custom)
+                  <input
+                    type="date"
+                    class="w-full font-semibold text-gray-500 text-sm p-2 border border-gray-300 rounded-lg bg-white focus:outline-none focus:ring-2 focus:ring-primary/50 focus:border-primary cursor-pointer"
+                    formControlName="tps"
+                  />
+
                 </td>
                 <td class="py-2 px-4 text-right">
                   <div class="relative flex justify-end">
@@ -133,10 +138,17 @@
                       placeholder="0.00"
                       min="0"
                       class="w-24 text-sm text-right py-2 pr-6 border border-gray-300 rounded-lg bg-white focus:outline-none focus:ring-2 focus:ring-primary/50 focus:border-primary shadow-sm font-bold text-gray-900">
-                    <span class="absolute right-2 top-2.5 text-xs text-gray-500 pointer-events-none">zł</span>
+                    <span class="absolute right-2 top-3 text-xs text-gray-500 pointer-events-none">zł</span>
                   </div>
                 </td>
-                <td class="text-base normal-case py-2 px-4 text-right text-gray-500 font-medium whitespace-nowrap">-- zł</td>
+                <td class="text-base normal-case py-2 px-4 text-right text-gray-500 font-medium whitespace-nowrap">
+                  <input
+                    type="text"
+                    class="w-full text-sm py-2 px-3 border border-gray-300 rounded-lg bg-white focus:outline-none focus:ring-2 focus:ring-primary/50 focus:border-primary shadow-sm font-semibold text-gray-800 text-right"
+                    placeholder="450g"
+                    formControlName="pack"
+                  />
+                </td>
                 <td class="text-base normal-case py-2 px-4 text-right text-gray-500 font-medium whitespace-nowrap">
                   {{ scratchGrossPrice | number: '1.2-2' }} zł
                 </td>
@@ -169,25 +181,25 @@
               <span class="font-semibold text-gray-800 px-2.5 py-1 rounded-md">{{item.amount}} {{item.unit | lowercase}}</span>
             </td>
             <td class="py-2 px-3 text-center text-right">
-              <span class="font-semibold text-gray-800  px-2.5 py-1 rounded-md">--</span>
+              <span class="font-semibold text-gray-800  px-2.5 py-1 rounded-md">{{ item.tps | date: 'dd.MM.yyyy' }}</span>
             </td>
             <td class="py-2 px-3 text-right text-gray-600 font-medium">
               {{ item.unitPrice | number: '1.2-2'}} zł
             </td>
             <td class="py-2 px-3 text-right text-gray-600 font-medium">
-              -- zł
+              {{ item.pack }}
             </td>
             <td class="py-2 px-3 text-right font-bold text-gray-900">
               {{item.sum | number: '1.2-2'}} zł
             </td>
+            <td></td>
           </tr>
           }
           </tbody>
 
           <tfoot class="bg-gray-50 border-t border-gray-200 lg:sticky lg:bottom-0">
           <tr>
-            <td colspan="4" class="py-3 px-4 text-right font-bold text-gray-500 uppercase text-xs tracking-wider">Razem:</td>
-            <td class="py-3 px-4 text-right font-bold text-green-600 whitespace-nowrap">-- zł</td>
+            <td colspan="5" class="py-3 px-4 text-right font-bold text-gray-500 uppercase text-xs tracking-wider">Razem:</td>
             <td class="py-3 px-4 text-right font-black text-gray-900 text-base whitespace-nowrap">{{sum | number : '1.2-2'}} zł</td>
             <td class="py-3 px-4 text-right font-black text-gray-900 text-base whitespace-nowrap"></td>
           </tr>
@@ -207,6 +219,8 @@
     (chooseProducts)="onChooseProducts($event)"
     (close)="addMode='scratch'"
     [chosenItemsInput]="chosenItems"
+    [individualItems]="individualProducts"
+    [items]="baseProducts"
   ></app-price-list-modal>
 }
 </div>
