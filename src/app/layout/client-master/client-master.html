@@ -13,17 +13,33 @@
      [class.-translate-x-full]="!isSidebarOpen"
      [class.translate-x-0]="isSidebarOpen">
 
-  <div class="flex items-center justify-between mb-2 shrink-0">
-    <div class="text-lg font-semibold text-gray-800">
-      Klienci
+  <div class="flex flex-col gap-3 mb-2">
+    <div class="flex items-center justify-between  shrink-0">
+      <div class="text-lg font-semibold text-gray-800">
+        Klienci
+      </div>
+      <button (click)="isSidebarOpen = false" class="xl:hidden p-1 text-gray-400 hover:text-gray-800 hover:bg-gray-100 rounded-md">
+        <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path></svg>
+      </button>
     </div>
-    <button (click)="isSidebarOpen = false" class="xl:hidden p-1 text-gray-400 hover:text-gray-800 hover:bg-gray-100 rounded-md">
-      <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path></svg>
-    </button>
+    <div class="relative group">
+      <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+        <svg class="h-5 w-5 text-gray-400 group-focus-within:text-green-600 transition-colors" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path>
+        </svg>
+      </div>
+
+      <input
+        (input)="onTerm($event)"
+        type="text"
+        placeholder="Szukaj klienta..."
+        class="block w-full pl-10 pr-3 py-2 border border-gray-200 rounded-xl leading-5 bg-gray-50 placeholder-gray-500 focus:outline-none focus:bg-white focus:ring-2 focus:ring-green-500 focus:border-transparent sm:text-sm transition-all shadow-sm"
+      />
+    </div>
   </div>
 
   <div class="flex flex-col flex-1 overflow-y-auto w-full pr-1">
-    @for (client of (_clients | async); track client.id) {
+    @for (client of (filteredClients | async); track client.id) {
       <div
         (click)="selectClient(client.id)"
         class="px-6 py-4 text-base transition cursor-pointer border-l-4"
@@ -39,8 +55,8 @@
     }
   </div>
   @if (userState._basePath | async; as basePath){
-  <div class="flex shrink-0 w-full flex-wrap sm:flex-nowrap">
-    <app-button-small [routerLink]="[basePath,'clients','new']" class="w-full sm:w-auto" [isFullWidth] = "true" [buttonText]="'Dodaj klienta'"></app-button-small>
-  </div>
+    <div class="flex shrink-0 w-full flex-wrap sm:flex-nowrap">
+      <app-button-small [routerLink]="[basePath,'clients','new']" class="w-full sm:w-auto" [isFullWidth] = "true" [buttonText]="'Dodaj klienta'"></app-button-small>
+    </div>
   }
 </div>

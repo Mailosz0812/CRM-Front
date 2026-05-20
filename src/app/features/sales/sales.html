@@ -63,16 +63,26 @@
               </div>
 
               <div class="flex items-center justify-between sm:justify-end gap-6 w-full sm:w-auto">
-                @if (!doneOrders().has(sale.saleId)) {
-                  <span class="px-4 py-1.5 rounded-full text-sm font-bold tracking-wide bg-yellow-100 text-yellow-700 transition-colors">
+                <div class="flex flex-col gap-3">
+
+                  @if (!doneOrders().has(sale.saleId)) {
+                    <span class="px-4 py-1.5 rounded-full text-sm font-bold tracking-wide bg-yellow-100 text-yellow-700 transition-colors">
                     Do złożenia
                   </span>
-                } @else {
-                  <span class="px-4 py-1.5 rounded-full text-sm font-bold tracking-wide bg-green-100 text-green-700 transition-colors">
+                  } @else {
+                    <span class="px-4 py-1.5 rounded-full text-sm font-bold tracking-wide bg-green-100 text-green-700 transition-colors">
                     Gotowe
                   </span>
-                }
+                  }
+                  <button
+                    class=" w-full sm:w-auto px-4 py-2 text-sm font-medium text-gray-700 bg-white border border-gray-200 rounded-lg hover:bg-gray-50 transition-colors flex items-center justify-center gap-2 shadow-sm"
+                    (click)="onPrintSale(sale.saleId); $event.stopPropagation()"
+                  >
+                    <svg class="w-4 h-4 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 17h2a2 2 0 002-2v-4a2 2 0 00-2-2H5a2 2 0 00-2 2v4a2 2 0 002 2h2m2 4h6a2 2 0 002-2v-4a2 2 0 00-2-2H9a2 2 0 00-2 2v4a2 2 0 002 2zm8-12V5a2 2 0 00-2-2H9a2 2 0 00-2 2v4h10z"></path></svg>
+                    Wydruk
+                  </button>
 
+                </div>
                 <svg class="w-6 h-6 text-gray-400 transition-transform duration-300"
                      [class.rotate-180]="expandedOrders().has(sale.saleId)"
                      fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -86,9 +96,10 @@
                 <ul class="space-y-3">
                   @for(item of sale.itemsList; track item.saleItemId) {
                     <li class="flex items-center justify-between bg-white p-4 rounded-lg border border-gray-200 shadow-sm">
-                      <div>
+                      <div class="flex flex-col gap-1">
                         <p class="text-lg font-bold text-gray-800">{{item.internal}}</p>
                         <p class="text-sm text-gray-400 font-mono">{{item.name}}</p>
+                        <p class="font-semibold">{{item.category}}</p>
                       </div>
                       <div class="text-3xl font-black text-primary bg-surface-light px-4 py-1 rounded-lg">
                         {{item.amount}} <span class="text-xl">{{item.unit | lowercase}}</span>
@@ -97,7 +108,15 @@
                   }
                 </ul>
 
-                <div class="flex justify-end pt-4 border-t border-gray-200">
+                <div class="flex justify-between pt-4 border-t border-gray-200">
+                  <div class="w-full sm:w-2/3">
+                    @if (sale.warehouseNote) {
+                      <div class="bg-gray-50 rounded-lg p-3 border border-gray-100 shadow-sm  text-gray-600">
+                        <span class="font-bold text-gray-400 uppercase text-sm tracking-wider mb-1 block">Notatka do zamówienia:</span>
+                        <p>{{sale.warehouseNote}}</p>
+                      </div>
+                    }
+                  </div>
                   <button (click)="markAsDone(sale.saleId, $event)"
                           class="w-full sm:w-auto bg-primary hover:bg-primary-dark text-white font-bold py-3.5 px-8 rounded-xl shadow-md transition-all flex items-center justify-center gap-2 text-lg">
                     <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -111,18 +130,18 @@
 
           </div>
         }@empty{
-            <div class="flex flex-col items-center justify-center py-12 px-4 text-center border border-gray-200 flex-1 rounded-md">
-              <svg xmlns="http://www.w3.org/2000/svg" class="h-16 w-16 text-gray-200 mb-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M20 7l-8-4-8 4m16 0l-8 4m8-4v10l-8 4m0-10L4 7m8 4v10M4 7v10l8 4" />
-              </svg>
-              <h3 class=" font-bold text-[#1e293b] uppercase tracking-wider">
-                Brak zamówień
-              </h3>
+          <div class="flex flex-col items-center justify-center py-12 px-4 text-center border border-gray-200 flex-1 rounded-md">
+            <svg xmlns="http://www.w3.org/2000/svg" class="h-16 w-16 text-gray-200 mb-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M20 7l-8-4-8 4m16 0l-8 4m8-4v10l-8 4m0-10L4 7m8 4v10M4 7v10l8 4" />
+            </svg>
+            <h3 class=" font-bold text-[#1e293b] uppercase tracking-wider">
+              Brak zamówień
+            </h3>
 
-              <p class="mt-2 text-sm text-gray-500  text-center leading-relaxed">
-                Brak zamówień na dzisiaj
-              </p>
-            </div>
+            <p class="mt-2 text-sm text-gray-500  text-center leading-relaxed">
+              Brak zamówień na dzisiaj
+            </p>
+          </div>
         }
       </div>
 

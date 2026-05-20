@@ -8,6 +8,8 @@ import {BehaviorSubject, filter, Observable, switchMap} from 'rxjs';
 import {ClientDashboardInfo} from '../../core/client/models/client-dashboard-info';
 import {AsyncPipe, CurrencyPipe, LowerCasePipe} from '@angular/common';
 import {UserStateService} from '../../core/user/user-state.service';
+import {PriceListService} from '../../core/pricelist/PriceListService';
+import {FormatEnumPipe} from '../../shared/format-enum-pipe';
 
 @Component({
   selector: 'app-clients',
@@ -18,7 +20,8 @@ import {UserStateService} from '../../core/user/user-state.service';
     RouterLink,
     AsyncPipe,
     CurrencyPipe,
-    LowerCasePipe
+    LowerCasePipe,
+    FormatEnumPipe
   ],
   templateUrl: './clients.html',
 })
@@ -28,7 +31,7 @@ export class Clients implements OnInit{
 
   basePath!: string;
   constructor(private clientService: ClientService,private router: Router,
-              private userState: UserStateService) {}
+              private userState: UserStateService,private priceListService: PriceListService) {}
 
   ngOnInit(): void {
     this._clientState = this.selectedId$.pipe(
@@ -50,5 +53,27 @@ export class Clients implements OnInit{
   }
   onPriceListDetails(clientId: string){
     this.router.navigate([this.basePath,'prices','individual'],{ state: { preselectedClientId: clientId } });
+  }
+  onNewSale(clientId: string){
+    this.router.navigate([this.basePath,'sales','new'],{ state: { preselectedClientId: clientId } });
+  }
+  onPrintPriceList(id: string){
+    if(!id){
+      return;
+    }
+    this.priceListService.getPriceListPrint(id).subscribe({
+      next: (resp) => {
+        const pdfBlob = new Blob([resp], { type: 'application/pdf' });
+        const fileUrl = URL.createObjectURL(pdfBlob);
+
+        window.open(fileUrl,'_blank');
+        setTimeout(() => {
+          URL.revokeObjectURL(fileUrl);
+        }, 1000);
+      },
+      error: (err) => {
+        console.log(err);
+      }
+    });
   }
 }
